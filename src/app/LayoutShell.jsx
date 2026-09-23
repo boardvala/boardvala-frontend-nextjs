@@ -31,7 +31,9 @@ export default function LayoutShell({ children }) {
   return (
     <>
       <Navbar />
-      {children}
+      <main style={{ minHeight: "70vh" }}>
+        {children}
+      </main>
       <Footer />
       <WhatsAppButton />
     </>
