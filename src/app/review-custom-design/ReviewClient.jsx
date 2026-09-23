@@ -15,7 +15,8 @@ export default function ReviewCustomDesign() {
   const [stageWidth, setStageWidth] = useState(0);
   const [show3DModal, setShow3DModal] = useState(false);
 
-  const [customData, setCustomData] = useState(null)
+  const [customData, setCustomData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -26,6 +27,7 @@ export default function ReviewCustomDesign() {
     } catch {
       setCustomData(null);
     }
+    setLoading(false);
   }, []);
 
   const price = customData?.price || 0;
@@ -94,49 +96,49 @@ export default function ReviewCustomDesign() {
   }
 
   function handleAddToCart() {
-  setAdding(true);
-  const cart = JSON.parse(localStorage.getItem("customCart")) || [];
+    setAdding(true);
+    const cart = JSON.parse(localStorage.getItem("customCart")) || [];
 
-  const existingIndex = cart.findIndex(
-    (item) =>
-      item.material === customData.material &&
-      item.frameSize === customData.frameSize &&
-      item.orientation === customData.orientation &&
-      item.previewImage === customData.previewImage,
-  );
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.material === customData.material &&
+        item.frameSize === customData.frameSize &&
+        item.orientation === customData.orientation &&
+        item.previewImage === customData.previewImage,
+    );
 
-  if (existingIndex >= 0) {
-    cart[existingIndex].quantity += quantity;
-  } else {
-    cart.push({
-      id: Date.now(),
-      ...customData,        // ← orderType already inside!
-      ...(isBanner
-        ? {
-            width: customData.bannerWidth,
-            length: customData.bannerLength,
-          }
-        : {}),
-      quantity,
-    });
+    if (existingIndex >= 0) {
+      cart[existingIndex].quantity += quantity;
+    } else {
+      cart.push({
+        id: Date.now(),
+        ...customData, // ← orderType already inside!
+        ...(isBanner
+          ? {
+              width: customData.bannerWidth,
+              length: customData.bannerLength,
+            }
+          : {}),
+        quantity,
+      });
+    }
+
+    try {
+      localStorage.setItem("customCart", JSON.stringify(cart));
+      localStorage.removeItem("customDesignData"); // ← temporary data clear!
+    } catch (e) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Cart storage full. Please checkout current items first.",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    }
+    notifyCartChanged();
+    router.push("/cart");
   }
-
-  try {
-    localStorage.setItem("customCart", JSON.stringify(cart));
-    localStorage.removeItem("customDesignData");  // ← temporary data clear!
-  } catch (e) {
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon: "warning",
-      title: "Cart storage full. Please checkout current items first.",
-      showConfirmButton: false,
-      timer: 3000,
-    });
-  }
-  notifyCartChanged();
-  router.push("/cart");
-}
 
   async function handleCheckDelivery() {
     if (pincode.length !== 6) return;
@@ -200,7 +202,15 @@ export default function ReviewCustomDesign() {
         .btn-primary-dark:hover { background: #1d4ed8; color: #fff; }
       `}</style>
 
-      {!customData ? (
+      {loading ? (
+        <div
+          className="d-flex flex-column align-items-center justify-content-center"
+          style={{ minHeight: "70vh" }}
+        >
+          <div className="spinner-border text-dark mb-3"></div>
+          <p className="text-muted mb-0">Loading Preview...</p>
+        </div>
+      ) : !customData ? (
         <div className="review-wrap d-flex align-items-center">
           <div className="container py-5">
             <div
