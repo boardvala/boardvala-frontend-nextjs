@@ -1,4 +1,7 @@
+import { Suspense } from "react";
 import CustomDesignClient from "./CustomDesignClient";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Upload Your Design — Custom UV Printing | BoardVala",
@@ -7,5 +10,9 @@ export const metadata = {
 };
 
 export default function CustomDesignPage() {
-  return <CustomDesignClient />;
+  return (
+    <Suspense>
+      <CustomDesignClient />
+    </Suspense>
+  );
 }

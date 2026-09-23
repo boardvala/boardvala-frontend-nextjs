@@ -1,5 +1,6 @@
 // src/app/register/page.js
 "use client";
+export const dynamic = "force-dynamic";
 
 import { Suspense } from "react";
 import RegisterContent from "./RegisterContent";

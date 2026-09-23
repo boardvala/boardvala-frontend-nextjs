@@ -1,5 +1,6 @@
 // src/app/account/page.js
 "use client";
+export const dynamic = "force-dynamic";
 
 import { Suspense } from "react";
 import ProtectedRoute from "../../components/auth/ProtectedRoute";

@@ -300,7 +300,7 @@ export default function FeaturedProductClient({ product, similar }) {
                           } me-1`}
                         ></i>
                         {deliveryResult.available
-                          ? `Est. ${deliveryResult.estimatedDays} days`
+                          ? `Est. ${deliveryResult.estimatedDays}`
                           : "Not available"}
                       </span>
                     )}
