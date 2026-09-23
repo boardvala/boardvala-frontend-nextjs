@@ -1,0 +1,132 @@
+/* ===== Footer ===== */
+.bv-footer {
+  background: linear-gradient(135deg, #1b263b 0%, #243c63 100%);
+  color: #cbd5e1;
+  padding: 48px 0 0;
+  margin-top: auto;
+}
+
+.bv-footer-brand {
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.bv-footer-logo {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.bv-footer-desc {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #94a3b8;
+  max-width: 320px;
+}
+
+.bv-footer-heading {
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+
+/* Footer links */
+.bv-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bv-footer-links li {
+  margin-bottom: 10px;
+}
+
+.bv-footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.15s ease, padding-left 0.15s ease;
+}
+
+.bv-footer-links a:hover {
+  color: #fff;
+  padding-left: 4px;
+}
+
+/* Contact list */
+.bv-footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bv-footer-contact li {
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.bv-footer-contact a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.bv-footer-contact a:hover {
+  color: #fff;
+}
+
+/* Social icons */
+.bv-footer-socials {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.bv-footer-socials a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bv-footer-socials a:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* Bottom bar */
+.bv-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 40px;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* Mobile */
+@media (max-width: 767.98px) {
+  .bv-footer {
+    padding: 32px 0 0;
+  }
+
+  .bv-footer-desc {
+    max-width: 100%;
+  }
+
+  .bv-footer-bottom {
+    margin-top: 24px;
+  }
+}

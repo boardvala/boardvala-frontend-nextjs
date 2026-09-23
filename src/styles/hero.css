@@ -1,0 +1,180 @@
+/* ===== Hero Carousel ===== */
+.bv-hero {
+  position: relative;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+/* प्रत्येक slide */
+.bv-hero__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  background-size: cover;
+  background-position: center;
+}
+.bv-hero__slide.active {
+  opacity: 1;
+}
+
+/* image जवळपास पूर्ण दिसावी — फक्त डावीकडे मजकुरामागे हलकी गडद छटा
+   म्हणजे पांढरा मजकूर वाचता येतो, पण image स्पष्ट राहते. */
+.bv-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.75) 0%,
+    rgba(15, 23, 42, 0.4) 40%,
+    rgba(15, 23, 42, 0.05) 70%,
+    rgba(15, 23, 42, 0) 100%
+  );
+}
+
+/* full-height stage */
+.bv-hero__stage {
+  position: relative;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+}
+
+.bv-hero__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.bv-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.18);
+  border: 1px solid rgba(147, 197, 253, 0.35);
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+/* slide-नुसार बदलणारा मजकूर */
+.bv-hero__text {
+  color: #fff;
+  max-width: 620px;
+}
+.bv-hero__title {
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  margin: 16px 0 14px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+.bv-hero__lead {
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  max-width: 520px;
+  margin-bottom: 26px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* animate मजकूर बदलताना */
+.bv-hero__text .bv-hero__title,
+.bv-hero__text .bv-hero__lead,
+.bv-hero__text .bv-hero__eyebrow {
+  animation: bvFadeUp 0.7s ease both;
+}
+@keyframes bvFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* स्थिर बटण — गडद निळं (आधीसारखं) */
+.bv-hero__cta-primary {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: 14px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.bv-hero__cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.55);
+  color: #fff;
+}
+.bv-hero__cta-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 12px;
+  transition: background 0.15s ease;
+}
+.bv-hero__cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+/* dots */
+.bv-hero__dots {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+.bv-hero__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+.bv-hero__dot.active {
+  background: #2563eb;
+  width: 26px;
+}
+
+@media (max-width: 991px) {
+  .bv-hero__stage {
+    min-height: 460px;
+  }
+  /* लहान स्क्रीनवर मजकूर मध्यभागी अधिक readable — overlay थोडा जास्त */
+  .bv-hero__overlay {
+    background: linear-gradient(
+      90deg,
+      rgba(15, 23, 42, 0.8) 0%,
+      rgba(15, 23, 42, 0.55) 55%,
+      rgba(15, 23, 42, 0.25) 100%
+    );
+  }
+}
+@media (max-width: 576px) {
+  .bv-hero__stage {
+    min-height: 420px;
+  }
+  .bv-hero__lead {
+    font-size: 0.95rem;
+  }
+}
+
+

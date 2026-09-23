@@ -1,0 +1,215 @@
+.bv-navbar {
+  background: linear-gradient(135deg, #1b263b 0%, #243c63 100%);
+}
+
+.bv-logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+.bv-navbar .nav-link {
+  color: #e2e8f0 !important;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.bv-navbar .nav-link:hover {
+  color: #ffffff !important;
+}
+
+/* ========================================
+           PRODUCT CATALOGUE
+        ======================================== */
+
+.bv-catalog {
+  position: relative;
+}
+
+.bv-catalog-btn {
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-weight: 500;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.bv-catalog-btn:hover {
+  color: #ffffff;
+}
+
+.bv-catalog-arrow {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.bv-catalog-arrow.open {
+  transform: rotate(180deg);
+}
+
+.bv-catalog-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+
+  width: 245px;
+
+  background: #ffffff;
+  border-radius: 10px;
+
+  padding: 8px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+
+  z-index: 9999;
+
+  animation: bvDropdownFade 0.15s ease;
+}
+
+@keyframes bvDropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bv-catalog-item {
+  display: block;
+
+  width: 100%;
+
+  padding: 11px 14px;
+
+  border-radius: 7px;
+
+  text-decoration: none;
+
+  color: #1b263b;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    padding-left 0.15s ease;
+}
+
+.bv-catalog-item:hover {
+  background: #f5c518;
+  color: #1b263b;
+  padding-left: 18px;
+}
+
+/* ========================================
+           CART
+        ======================================== */
+
+.bv-cart {
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #e2e8f0 !important;
+
+  font-size: 1.25rem;
+
+  padding: 6px 10px;
+
+  transition: color 0.15s ease;
+}
+
+.bv-cart:hover {
+  color: #f5c518 !important;
+}
+
+.bv-cart-badge {
+  position: absolute;
+
+  top: -2px;
+  right: 0;
+
+  background: #f5c518;
+  color: #1b263b;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  min-width: 18px;
+  height: 18px;
+
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 4px;
+
+  line-height: 1;
+}
+
+/* ========================================
+           NAVBAR TOGGLE
+        ======================================== */
+
+.bv-navbar .navbar-toggler:focus,
+.bv-navbar .navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ========================================
+           MOBILE
+        ======================================== */
+
+@media (max-width: 991px) {
+  .bv-catalog-btn {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .bv-catalog-menu {
+    position: static;
+
+    width: 100%;
+
+    margin-top: 5px;
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+    box-shadow: none;
+
+    background: #ffffff;
+  }
+
+  .bv-catalog-item {
+    padding: 10px 12px;
+  }
+
+  .bv-cart {
+    padding-left: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width: 576px) {
+  .bv-logo {
+    height: 38px;
+  }
+}

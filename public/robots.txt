@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Private areas — search engines should not index these
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /account
+Disallow: /login
+Disallow: /register
+Disallow: /cart
+Disallow: /review-custom-design
+
+Sitemap: https://online.boardvala.com/sitemap.xml

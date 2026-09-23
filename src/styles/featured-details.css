@@ -1,0 +1,120 @@
+/* ===== Featured Product Details ===== */
+.fpd-wrap {
+  background: #f6f7f9;
+  min-height: 80vh;
+}
+
+/* mobile-first: एका column मध्ये */
+.fpd-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* image */
+.fpd-media { width: 100%; }
+.fpd-main-img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e9ecef;
+}
+.fpd-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: center;
+}
+.fpd-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.fpd-thumb:hover { transform: translateY(-2px); }
+.fpd-thumb.active { border-color: #1b263b; }
+
+/* details */
+.fpd-info { width: 100%; }
+.fpd-cat {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.fpd-title {
+  font-weight: 600;
+  color: #1b263b;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+.fpd-price {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.fpd-stock-in { color: #16a34a; font-size: 0.85rem; font-weight: 600; }
+.fpd-stock-out { color: #dc2626; font-size: 0.85rem; font-weight: 600; }
+
+.fpd-section-head {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin: 20px 0 8px;
+}
+.fpd-desc {
+  color: #475569;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+/* Add to cart बटण — navbar रंगात */
+.fpd-cart-btn {
+  background: linear-gradient(135deg, #1b263b 0%, #243c63 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.98rem;
+  padding: 12px 30px;
+  border-radius: 10px;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.fpd-cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(27, 38, 59, 0.35);
+  color: #fff;
+}
+.fpd-cart-btn:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* tablet+ : दोन column */
+@media (min-width: 768px) {
+  .fpd-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .fpd-media {
+    flex: 0 0 46%;
+    max-width: 46%;
+    
+  }
+  .fpd-info { flex: 1; }
+  .fpd-main-img { max-height: 520px; }
+  .fpd-title { font-size: 1.8rem; }
+}

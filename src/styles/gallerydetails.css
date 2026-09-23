@@ -1,0 +1,139 @@
+/* ===== Gallery Design Details ===== */
+.gd-wrap {
+  background: #f6f7f9;
+  min-height: 80vh;
+}
+
+.gd-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.gd-media {
+  width: 100%;
+}
+.gd-main-img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e9ecef;
+}
+.gd-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: center;
+}
+.gd-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.gd-thumb:hover { transform: translateY(-2px); }
+.gd-thumb.active { border-color: #243c63; }
+
+.gd-info { width: 100%; }
+.gd-title {
+  font-weight: 600;
+  color: #1b263b;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+.gd-price {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #0f172a;
+  margin-bottom: 18px;
+}
+
+.gd-section-head {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+.gd-desc {
+  color: #475569;
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+.gd-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.gd-size-btn {
+  border: 1.5px solid #cbd5e1;
+  background: #fff;
+  color: #1b263b;
+  font-weight: 500;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.gd-size-btn:hover {
+  border-color: #243c63;
+}
+.gd-size-btn.active {
+  border-color: #66228d;
+  border-width: 2px;
+  color: #1b263b;
+  font-weight: 600;
+}
+
+.gd-upload-btn {
+  background: linear-gradient(135deg, #1b263b 0%, #243c63 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 11px 24px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(27, 38, 59, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.gd-upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(27, 38, 59, 0.35);
+  color: #fff;
+}
+
+.gd-similar-head {
+  font-weight: 700;
+  color: #1b263b;
+}
+
+@media (min-width: 768px) {
+  .gd-grid {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .gd-media {
+    flex: 0 0 46%;
+    max-width: 46%;
+    position: sticky;
+    top: 90px;
+  }
+  .gd-info {
+    flex: 1;
+  }
+  .gd-main-img {
+    max-height: 520px;
+  }
+  .gd-title { font-size: 1.8rem; }
+}
