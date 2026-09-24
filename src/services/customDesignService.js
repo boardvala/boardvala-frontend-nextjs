@@ -38,12 +38,24 @@ export async function getMyCustomDesignOrderById(id) {
   return response.data;
 }
 
-export async function getOrderTracking(id) {
-  const res = await api.get(`/customDesign/${id}/tracking`);
+//envia service api
+export async function updateOrderShipping(id, data) {
+  const res = await api.put(`/customDesign/${id}/shipping`, data);
   return res.data;
 }
 
-export async function getAdminOrderTracking(id) {
-  const res = await api.get(`/customDesign/${id}/admin-tracking`);
+export async function trackOrderShipment(id) {
+  const res = await api.get(`/customDesign/${id}/track`);
   return res.data;
 }
+
+//shiprockert service api
+// export async function getOrderTracking(id) {
+//   const res = await api.get(`/customDesign/${id}/tracking`);
+//   return res.data;
+// }
+
+// export async function getAdminOrderTracking(id) {
+//   const res = await api.get(`/customDesign/${id}/admin-tracking`);
+//   return res.data;
+// }

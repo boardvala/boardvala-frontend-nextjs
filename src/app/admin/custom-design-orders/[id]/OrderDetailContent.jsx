@@ -6,9 +6,10 @@ import { getRequestImage } from "../../../../utils/imageUtils";
 import {
   getCustomDesignOrder,
   updateCustomDesignStatus,
-  getAdminOrderTracking,
+  updateOrderShipping,
+  trackOrderShipment,
 } from "../../../../services/customDesignService";
-
+import Swal from "sweetalert2";
 
 export default function AdminCustomDesignOrderDetails() {
   const { id } = useParams();
@@ -16,7 +17,13 @@ export default function AdminCustomDesignOrderDetails() {
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
+  const [shippingForm, setShippingForm] = useState({
+    courierName: "",
+    trackingNumber: "",
+  });
+  const [updatingShipping, setUpdatingShipping] = useState(false);
   const [tracking, setTracking] = useState(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
 
   useEffect(() => {
     loadOrder();
@@ -27,6 +34,10 @@ export default function AdminCustomDesignOrderDetails() {
       const data = await getCustomDesignOrder(id);
       setOrder(data.order);
       setStatus(data.order.status);
+      setShippingForm({
+        courierName: data.order.courierName || "",
+        trackingNumber: data.order.trackingNumber || "",
+      });
 
       // try {
       //   const t = await getAdminOrderTracking(id);
@@ -44,11 +55,84 @@ export default function AdminCustomDesignOrderDetails() {
   async function handleStatusUpdate() {
     try {
       await updateCustomDesignStatus(id, status);
-      alert("Status Updated Successfully");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Status Updated Successfully!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
       loadOrder();
     } catch (err) {
       console.error(err);
-      alert("Unable to Update Status");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update Status.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
+  }
+
+  async function handleUpdateShipping() {
+    setUpdatingShipping(true);
+    try {
+      const res = await updateOrderShipping(id, shippingForm);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: res.emailSent
+          ? "Shipping saved & email sent to customer! ✉️"
+          : "Shipping details updated!",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    } catch (err) {
+      console.log("err", err);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update shipping.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } finally {
+      setUpdatingShipping(false);
+    }
+  }
+
+  async function handleTrackShipment() {
+    setTrackingLoading(true);
+    try {
+      const data = await trackOrderShipment(id);
+      if (data.success) {
+        setTracking(data.tracking);
+      } else {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: data.message || "Tracking not available yet.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Tracking failed.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } finally {
+      setTrackingLoading(false);
     }
   }
 
@@ -104,62 +188,221 @@ export default function AdminCustomDesignOrderDetails() {
         <div className="row">
           {/* Customer */}
           <div className="col-md-6">
-  <div className="card shadow mb-4">
-    <div className="card-header">Customer Details</div>
-    <div className="card-body">
-      <p>
-        <strong>Name:</strong> {order.customerName}
-      </p>
-      <p>
-        <strong>Phone:</strong> {order.customerPhone}
-      </p>
-      <p>
-        <strong>Email:</strong> {order.customerEmail || "-"}
-      </p>
-      <p>
-        <strong>Address:</strong> {order.customerAddress}
-      </p>
-      <p>
-        <strong>City:</strong> {order.customerCity}
-      </p>
-      <p>
-        <strong>State:</strong> {order.customerState}
-      </p>
-      <p className="mb-0">
-        <strong>Pincode:</strong> {order.customerPincode}
-      </p>
+            <div className="card shadow mb-4">
+              <div className="card-header">Customer Details</div>
+              <div className="card-body">
+                <p>
+                  <strong>Name:</strong> {order.customerName}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {order.customerPhone}
+                </p>
+                <p>
+                  <strong>Email:</strong> {order.customerEmail || "-"}
+                </p>
+                <p>
+                  <strong>Address:</strong> {order.customerAddress}
+                </p>
+                <p>
+                  <strong>City:</strong> {order.customerCity}
+                </p>
+                <p>
+                  <strong>State:</strong> {order.customerState}
+                </p>
+                <p className="mb-0">
+                  <strong>Pincode:</strong> {order.customerPincode}
+                </p>
 
-      {/* Tracking */}
-      <hr />
-      <h6 className="fw-bold mb-3" style={{ color: "#1b263b" }}>
-        <i className="bi bi-truck me-2"></i>Shipping &amp; Tracking
-      </h6>
-      {tracking?.awbCode ? (
-        <div className="p-3 rounded" style={{ background: "#eef2ff" }}>
-          <div className="d-flex justify-content-between mb-2">
-            <span className="text-muted">Courier</span>
-            <span className="fw-semibold">{tracking.courierName}</span>
+                {/* ---- Shipping & Tracking ---- */}
+                <div className="card shadow-sm mt-4">
+                  <div className="card-body">
+                    <h5 className="fw-bold mb-3">
+                      <i className="bi bi-truck me-2"></i>Shipping & Tracking
+                    </h5>
+
+                    {/* Update Form */}
+                    <div className="row g-3">
+                      <div className="col-md-4">
+                        <label className="form-label fw-semibold">
+                          Courier Name
+                        </label>
+                        <input
+                          className="form-control"
+                          value={shippingForm.courierName}
+                          onChange={(e) =>
+                            setShippingForm((prev) => ({
+                              ...prev,
+                              courierName: e.target.value,
+                            }))
+                          }
+                          placeholder="e.g. BlueDart, Delhivery"
+                        />
+                      </div>
+                      <div className="col-md-4">
+                        <label className="form-label fw-semibold">
+                          Tracking Number
+                        </label>
+                        <input
+                          className="form-control"
+                          value={shippingForm.trackingNumber}
+                          onChange={(e) =>
+                            setShippingForm((prev) => ({
+                              ...prev,
+                              trackingNumber: e.target.value,
+                            }))
+                          }
+                          placeholder="Paste from Envia dashboard"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="d-flex gap-2 mt-3">
+                      <button
+                        className="btn btn-dark"
+                        onClick={handleUpdateShipping}
+                        disabled={updatingShipping}
+                      >
+                        {updatingShipping ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-save me-2"></i>Save Shipping
+                          </>
+                        )}
+                      </button>
+
+                      {shippingForm.trackingNumber && (
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={handleTrackShipment}
+                          disabled={trackingLoading}
+                        >
+                          {trackingLoading ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-2"></span>
+                              Tracking...
+                            </>
+                          ) : (
+                            <>
+                              <i className="bi bi-geo-alt me-2"></i>Track
+                              Shipment
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Live Tracking Events */}
+                    {tracking && (
+                      <div className="mt-4">
+                        <div className="d-flex align-items-center gap-3 mb-3">
+                          <span
+                            className={`badge ${
+                              tracking.status === "Delivered"
+                                ? "bg-success"
+                                : tracking.status === "Shipped"
+                                  ? "bg-primary"
+                                  : "bg-warning text-dark"
+                            }`}
+                            style={{ fontSize: "0.85rem" }}
+                          >
+                            {tracking.status}
+                          </span>
+                          {tracking.carrier && (
+                            <span className="text-muted">
+                              via {tracking.carrier}
+                            </span>
+                          )}
+                          {tracking.estimatedDelivery && (
+                            <span className="text-muted">
+                              <i className="bi bi-calendar me-1"></i>
+                              Est:{" "}
+                              {new Date(
+                                tracking.estimatedDelivery,
+                              ).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                          )}
+                          {tracking.signedBy && (
+                            <span className="text-muted">
+                              <i className="bi bi-person-check me-1"></i>
+                              Signed by: {tracking.signedBy}
+                            </span>
+                          )}
+                        </div>
+                        {tracking.events && tracking.events.length > 0 ? (
+                          <div
+                            className="border rounded p-3"
+                            style={{ maxHeight: "300px", overflowY: "auto" }}
+                          >
+                            {tracking.events.map((event, i) => (
+                              <div
+                                key={i}
+                                className={`d-flex gap-3 ${i < tracking.events.length - 1 ? "mb-3 pb-3 border-bottom" : ""}`}
+                              >
+                                <div>
+                                  <i
+                                    className={`bi ${i === 0 ? "bi-geo-alt-fill text-primary" : "bi-circle text-muted"}`}
+                                    style={{
+                                      fontSize: i === 0 ? "1.1rem" : "0.7rem",
+                                    }}
+                                  ></i>
+                                </div>
+                                <div>
+                                  <div
+                                    className="fw-semibold"
+                                    style={{ fontSize: "0.9rem" }}
+                                  >
+                                    {event.description}
+                                  </div>
+                                  <div
+                                    className="text-muted"
+                                    style={{ fontSize: "0.8rem" }}
+                                  >
+                                    {event.location && (
+                                      <span className="me-3">
+                                        <i className="bi bi-geo me-1"></i>
+                                        {event.location}
+                                      </span>
+                                    )}
+                                    {event.date && (
+                                      <span>
+                                        <i className="bi bi-clock me-1"></i>
+                                        {new Date(event.date).toLocaleString(
+                                          "en-IN",
+                                          {
+                                            day: "numeric",
+                                            month: "short",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          },
+                                        )}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-muted mb-0">
+                            No tracking events available yet.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="d-flex justify-content-between mb-2">
-            <span className="text-muted">Tracking No (AWB)</span>
-            <span className="fw-semibold">{tracking.awbCode}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span className="text-muted">Status</span>
-            <span className="fw-semibold" style={{ color: "#2563eb" }}>
-              {tracking.shipmentStatus || tracking.orderStatus}
-            </span>
-          </div>
-        </div>
-      ) : (
-        <div className="p-3 rounded text-muted" style={{ background: "#f1f5f9" }}>
-          <i className="bi bi-clock-history me-2"></i>
-          Not shipped yet. Assign a courier in Shiprocket to generate tracking.
-        </div>
-      )}
-    </div>
-  </div>
-</div>
 
           {/* Design */}
           <div className="col-md-6">
