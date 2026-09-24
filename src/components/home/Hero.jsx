@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import "../../styles/hero.css";
 
 // TODO: या placeholder images तुमच्या स्वतःच्या product फोटोंनी बदला.
@@ -38,13 +37,12 @@ const SLIDES = [
     eyebrow: "Your Design, Your Product",
     title: "Upload Anything, We'll Print It",
     lead: "From artwork and logos to quotes and photographs, turn your ideas into beautifully printed products.",
-  },  
+  },
 ];
 
 const AUTO_MS = 4000;
 
 export default function Hero() {
-  const router = useRouter();
   const [current, setCurrent] = useState(0);
 
   // auto-slide
@@ -126,13 +124,9 @@ export default function Hero() {
           </div>
 
           <div className="d-flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="bv-hero__cta-primary"
-              onClick={() => router.push("/custom-design")}
-            >
+            <Link href="/custom-design" className="bv-hero__cta-primary">
               Upload Your Design →
-            </button>
+            </Link>
 
             <Link href="/products" className="bv-hero__cta-secondary">
               Browse Designs

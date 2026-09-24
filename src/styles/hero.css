@@ -101,6 +101,8 @@
 
 /* स्थिर बटण — गडद निळं (आधीसारखं) */
 .bv-hero__cta-primary {
+  display: inline-block;
+  text-decoration: none;
   background: #2563eb;
   border: none;
   color: #fff;

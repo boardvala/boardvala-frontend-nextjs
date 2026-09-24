@@ -1,19 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthContext";
-
+import Link from "next/link";
 // TODO: तुमच्या स्वतःच्या नेमप्लेट फोटोने बदला (public/ मधला path किंवा Cloudinary URL).
-const SECTION_IMAGE = "Engraved-House-Name.jpg";
+const SECTION_IMAGE = "catlog.png";
 
 export default function DesignYourOwnSection() {
-  const router = useRouter();
-  const { user } = useAuth();
-
-  function handleUploadDesign() {
-    router.push("/custom-design");
-  }
-
   return (
     <section className="py-5 bg-light">
       <style>{`
@@ -35,18 +26,21 @@ export default function DesignYourOwnSection() {
           box-shadow: 0 20px 45px rgba(15,23,42,.18);
         }
         .dyo-cta {
-          background: #0f172a;
+          display: inline-block;
+          text-decoration: none;
+          background: #2563eb;
+          border: none;
           color: #fff;
           font-weight: 700;
-          padding: 13px 30px;
+          padding: 14px 30px;
           border-radius: 12px;
-          border: none;
-          transition: transform .15s ease, background .15s ease;
-        }
-        .dyo-cta:hover {
-          background: #1e293b;
-          color: #fff;
+          box-shadow: 0 10px 26px rgba(37, 99, 235, 0.45);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+       }
+       .dyo-cta:hover {
           transform: translateY(-2px);
+          box-shadow: 0 14px 32px rgba(37, 99, 235, 0.55);
+          color: #fff;
         }
       `}</style>
 
@@ -67,9 +61,7 @@ export default function DesignYourOwnSection() {
               CUSTOM DESIGN SERVICE
             </span>
 
-            <h2 className="fw-bold mb-3">
-              Already have your own design?
-            </h2>
+            <h2 className="fw-bold mb-3">Already have your own design?</h2>
 
             <p className="text-muted fs-5 mb-4">
               Upload your artwork, logo or photo and choose the size that fits
@@ -99,13 +91,15 @@ export default function DesignYourOwnSection() {
 
               <div className="d-flex align-items-center">
                 <span className="dyo-check">✓</span>
-                <span className="ms-3">Fast production &amp; secure delivery</span>
+                <span className="ms-3">
+                  Fast production &amp; secure delivery
+                </span>
               </div>
             </div>
 
-            <button type="button" className="dyo-cta" onClick={handleUploadDesign}>
+            <Link href="/custom-design" className="dyo-cta">
               Upload Your Design →
-            </button>
+            </Link>
           </div>
         </div>
       </div>
