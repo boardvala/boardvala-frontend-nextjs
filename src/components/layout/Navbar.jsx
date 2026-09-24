@@ -6,16 +6,25 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { FaShoppingCart, FaChevronDown } from "react-icons/fa";
 import { getCartCount } from "../../utils/cartEvents";
+import { usePathname } from "next/navigation";
 import "../../styles/navbar.css";
 
 export default function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
-
   const [cartCount, setCartCount] = useState(0);
   const [catalogOpen, setCatalogOpen] = useState(false);
-
   const catalogRef = useRef(null);
+
+  const pathname = usePathname();
+  const navbarCollapseRef = useRef(null);
+// Route change → menu auto-close
+useEffect(() => {
+  const navbar = navbarCollapseRef.current;
+  if (navbar && navbar.classList.contains("show")) {
+    navbar.classList.remove("show");
+  }
+}, [pathname]);
 
   const catalogues = [
     {
@@ -102,7 +111,7 @@ export default function Navbar() {
 
           <div
             className="collapse navbar-collapse"
-            id="menu"
+            id="menu" ref={navbarCollapseRef}
           >
             <ul className="navbar-nav ms-auto align-items-lg-center">
 
