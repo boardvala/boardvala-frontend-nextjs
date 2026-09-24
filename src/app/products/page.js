@@ -3,9 +3,13 @@ import ProductCard from "../../components/product/ProductCard";
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export const metadata = {
-  title: "All Design Ideas & Inspiration — Prints & Home Decor | BoardVala",
+  title: "All Designs — Acrylic Photo Frames, Name Plates, UV Prints | BoardVala",
   description:
-    "Browse design inspiration for custom UV prints on acrylic, MDF, sunboard, vinyl and flex banners. Get ideas for name plates, home decor and banners, then upload your own to make it yours. Delivered across India.",
+    "Browse design ideas for acrylic photo frames, custom name plates, MDF prints, sunboard signage, wedding frames and personalized gifts. Upload your own design for UV printing.",
+  keywords: "acrylic photo frame designs, name plate designs, UV print designs, wedding frame ideas, personalized gift designs",
+  alternates: {
+    canonical: "https://www.boardvala.com/products",
+  },
 };
 
 async function getProducts() {

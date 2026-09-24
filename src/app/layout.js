@@ -27,7 +27,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Custom Photo Frames, Name Plates & UV Printing | BoardVala",
+    title: "Custom acrylic Photo Frames, Name Plates & UV Printing | BoardVala",
     description:
       "Acrylic photo frames, wedding frames, personalized gifts, name plates, signage and banners. Delivered across India.",
     images: ["https://boardvala.com/og-preview.jpg"],
