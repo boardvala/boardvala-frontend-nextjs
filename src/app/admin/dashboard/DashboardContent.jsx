@@ -60,6 +60,12 @@ const CARDS = [
     to: "/admin/pricing",
     icon: "💰",
   },
+  {
+    title: "Blog Posts",
+    desc: "Write and manage blog articles for SEO.",
+    to: "/admin/blog",
+    icon: "📝",
+  },
 ];
 
 export default function AdminDashboard() {

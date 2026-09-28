@@ -7,12 +7,6 @@ import "../../styles/hero.css";
 // public/ मध्ये ठेवल्यास "/hero/nameplate.jpg" असे द्या, किंवा Cloudinary URL.
 const SLIDES = [
   {
-    image: "/hero/ganpati_banner.jpg",
-    eyebrow: "Ganpati Festival Special",
-    title: "Welcome Bappa with Custom Prints",
-    lead: "Order custom Ganpati posters and banners for your home or society decoration.",
-  },
-  {
     image: "/hero/home_name.png",
     eyebrow: "Personalized Name Plates",
     title: "Create a Name Plate Made for You",

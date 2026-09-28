@@ -30,6 +30,7 @@ export default function Footer() {
               <li><Link href="/products">All Designs</Link></li>
               <li><Link href="/featured-products">Featured</Link></li>
               <li><Link href="/custom-design">Upload Design</Link></li>
+              <Link href="/blog">Blog</Link>
             </ul>
           </div>
 
