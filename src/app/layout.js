@@ -43,6 +43,89 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;700&display=swap"
           rel="stylesheet"
         />
+
+        {/* Business Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: "BoardVala",
+              image: "https://www.boardvala.com/og-preview.jpg",
+              url: "https://www.boardvala.com",
+              telephone: "+918329860034",
+              email: "support@boardvala.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "C9, dps road, Saturna midc, near ajmera tyre, badnera road",
+                addressLocality: "Amravati",
+                addressRegion: "Maharashtra",
+                postalCode: "444607",
+                addressCountry: "IN",
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 20.932,
+                longitude: 77.7523,
+              },
+              openingHoursSpecification: {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ],
+                opens: "10:00",
+                closes: "20:00",
+              },
+              sameAs: [
+                "https://www.instagram.com/boardvala",
+                "https://www.facebook.com/boardvala",
+              ],
+              priceRange: "₹150 - ₹5000",
+              description:
+                "Custom UV printing on acrylic, MDF, sunboard & vinyl. Photo frames, name plates, signage & home decor. Order online, delivered across India.",
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "UV Printing Services",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Acrylic UV Printing",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "MDF Name Plate Printing",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Sunboard Signage Printing",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Vinyl Sticker Printing",
+                    },
+                  },
+                ],
+              },
+            }),
+          }}
+        />
         <meta
           name="google-site-verification"
           content="7mgDaMN1go1u0TZHxNcR9fQ3KanFMRVP816kxwOJEYo"

@@ -4,7 +4,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 
 // Dynamic metadata — Google/WhatsApp ला product title + image दिसतं!
 export async function generateMetadata({ params }) {
-    const { id } = await params;
+  const { id } = await params;
   try {
     const res = await fetch(`${API}/featured-products/${id}`, {
       cache: "no-store",
@@ -70,5 +70,40 @@ export default async function FeaturedProductDetailsPage({ params }) {
   const product = await getProduct(id);
   const similar = await getSimilarProducts(id);
 
-  return <FeaturedProductClient product={product} similar={similar} />;
+  const productSchema = product
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.title,
+        description:
+          product.description ||
+          `${product.title} — premium UV-printed product by BoardVala`,
+        image: product.images?.length > 0 ? product.images[0] : "",
+        brand: { "@type": "Brand", name: "BoardVala" },
+        offers: {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: "INR",
+          availability: product.inStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          seller: { "@type": "Organization", name: "BoardVala" },
+          url: `https://www.boardvala.com/featured-products/${product._id}`,
+        },
+        material: product.material || "",
+        size: product.size || "",
+      }
+    : null;
+
+  return (
+    <>
+      {productSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      )}
+      <FeaturedProductClient product={product} similar={similar} />
+    </>
+  );
 }
