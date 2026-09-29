@@ -50,7 +50,7 @@ export default function DesignYourOwnSection() {
           <div className="col-lg-6 text-center">
             <img
               src={SECTION_IMAGE}
-              alt="A custom name plate ready to be produced"
+              alt="A custom acrylic photo frame, name plate ready to be produced - by boardvala"
               className="dyo-img"
             />
           </div>

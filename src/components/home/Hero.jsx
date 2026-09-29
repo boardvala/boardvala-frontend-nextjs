@@ -8,12 +8,14 @@ import "../../styles/hero.css";
 const SLIDES = [
   {
     image: "/hero/home_name.png",
+    alt: "Custom Personalized Name Plate — UV Printed on Acrylic & MDF by BoardVala",
     eyebrow: "Personalized Name Plates",
     title: "Create a Name Plate Made for You",
     lead: "Choose your design, personalize it with your name and create a beautiful name plate for your home or office.",
   },
   {
     image: "/hero/family_photo.png",
+    alt: "Personalized Family Photo Frame — UV Printed on Acrylic by BoardVala",
     eyebrow: "Personalized Photo Frames",
     title: "Turn Your Memories Into Lasting Prints",
     lead: "Upload your favourite photo and create a personalized photo frame printed on premium materials.",
@@ -21,6 +23,7 @@ const SLIDES = [
   {
     image:
       "https://images.unsplash.com/photo-1606166325683-e6deb697d301?w=1600&q=80",
+    alt: "Premium UV Printed Certificates and Awards on Acrylic — BoardVala",
     eyebrow: "Certificates & Awards",
     title: "Premium Printing for Certificates & Awards",
     lead: "Bring your certificates, awards and plaques to life with professional printing and premium finishing.",
@@ -28,6 +31,7 @@ const SLIDES = [
   {
     image:
       "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1600&q=80",
+    alt: "Custom Design Upload — UV Printing on Any Material by BoardVala",
     eyebrow: "Your Design, Your Product",
     title: "Upload Anything, We'll Print It",
     lead: "From artwork and logos to quotes and photographs, turn your ideas into beautifully printed products.",
@@ -102,6 +106,8 @@ export default function Hero() {
           key={i}
           className={`bv-hero__slide ${i === current ? "active" : ""}`}
           style={{ backgroundImage: `url(${s.image})` }}
+          role="img"
+          aria-label={s.alt}
         />
       ))}
 

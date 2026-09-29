@@ -4,27 +4,30 @@ const categories = [
     id: 1,
     name: "MDF",
     image: "/categories/Mdf.png",
+    alt: "MDF UV Printing — Custom Name Plates & Wall Art on MDF Wood Board",
     startingPrice: 299,
   },
   {
     id: 2,
     name: "Acrylic",
     image: "/categories/Acrylic.png",
+    alt: "Acrylic UV Printing — Premium Photo Frames & Name Plates on Acrylic Sheet",
     startingPrice: 499,
   },
   {
     id: 3,
     name: "PVC Sunboard",
     image: "/categories/Sunboard.png",
+    alt: "Sunboard Foam Sheet Printing — Affordable Signage & Display Boards",
     startingPrice: 249,
   },
   {
     id: 4,
     name: "Vinyl Stickers",
     image: "/categories/Vinyl.png",
+    alt: "Vinyl Sticker Printing — Custom Wall Graphics, Shop Branding & Vehicle Wraps",
     startingPrice: 149,
   },
-  
 ];
 
 export default function Categories() {
@@ -96,7 +99,7 @@ export default function Categories() {
                   <img
                     src={category.image}
                     className="cat-card__img"
-                    alt={`${category.name} material`}
+                    alt={category.alt}
                   />
                 </div>
                 <div className="cat-card__body">

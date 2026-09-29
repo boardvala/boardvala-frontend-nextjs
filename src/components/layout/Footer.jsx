@@ -83,6 +83,14 @@ export default function Footer() {
                 <i className="bi bi-facebook"></i>
               </a>
               <a
+                href="https://youtube.com/@boardvala"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Youtube"
+              >
+                <i className="bi bi-youtube"></i>
+              </a>
+              <a
                 href="https://wa.me/918329860034"
                 target="_blank"
                 rel="noopener noreferrer"

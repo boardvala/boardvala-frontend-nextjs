@@ -25,7 +25,7 @@ export default function ProductCard({ product }) {
           <img
             src={imageSrc}
             className="product-card-image"
-            alt={product.name}
+            alt={`${product.name} — ${product.type === "gallery" ? "Design" : product.type === "featured" ? "Product" : "Print"} by BoardVala`}
           />
 
           <div className="p-3">
