@@ -75,8 +75,9 @@ export default function SurveyPopup() {
       <div
         style={{
           position: "fixed",
-          bottom: "24px",
-          right: "24px",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: "min(380px, calc(100vw - 32px))",
           background: "#fff",
           borderRadius: "20px",
@@ -145,7 +146,9 @@ export default function SurveyPopup() {
           {submitted ? (
             <div style={{ textAlign: "center", padding: "20px 0" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>🙏</div>
-              <h4 style={{ fontWeight: 700, color: "#1b263b", margin: "0 0 4px" }}>
+              <h4
+                style={{ fontWeight: 700, color: "#1b263b", margin: "0 0 4px" }}
+              >
                 Thank You!
               </h4>
               <p style={{ color: "#64748b", fontSize: "0.9rem", margin: 0 }}>
@@ -237,11 +240,11 @@ export default function SurveyPopup() {
         @keyframes surveySlideUp {
           from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translate(-50%, -50%) scale(0.9);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(-50%, -50%) scale(1);
           }
         }
       `}</style>
