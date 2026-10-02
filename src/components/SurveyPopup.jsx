@@ -29,9 +29,14 @@ export default function SurveyPopup() {
     if (pathname.startsWith("/admin")) return;
 
     // 5 sec delay
-    const timer = setTimeout(() => {
-      setShow(true);
-    }, 5000);
+    // 5 sec delay
+const timer = setTimeout(() => {
+  setShow(true);
+  // Track impression (popup shown)
+  try {
+    submitSurvey({ type: "impression", page: pathname });
+  } catch {}
+}, 5000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -39,7 +44,7 @@ export default function SurveyPopup() {
   async function handleSubmit(sourceId) {
     setSelected(sourceId);
     try {
-      await submitSurvey({ source: sourceId, page: pathname });
+      await submitSurvey({type: "answer", source: sourceId, page: pathname });
     } catch {
       // silent fail — survey = non-critical
     }
@@ -51,9 +56,13 @@ export default function SurveyPopup() {
   }
 
   function handleClose() {
-    localStorage.setItem("surveyDone", "true");
-    setShow(false);
-  }
+  localStorage.setItem("surveyDone", "true");
+  // Track skip
+  try {
+    submitSurvey({ type: "skip", page: pathname });
+  } catch {}
+  setShow(false);
+}
 
   if (!show) return null;
 
