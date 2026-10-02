@@ -101,6 +101,22 @@
 .blog-detail-content ul, .blog-detail-content ol { margin-bottom: 16px; padding-left: 24px; }
 .blog-detail-content li { margin-bottom: 8px; }
 .blog-detail-content img { max-width: 100%; border-radius: 8px; margin: 16px 0; }
+
+.blog-detail-content table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+.blog-detail-content table th,
+.blog-detail-content table td {
+  min-width: 120px;
+  white-space: normal;
+}
+
 .blog-detail-content blockquote {
   border-left: 4px solid #2563eb;
   padding: 12px 20px;
