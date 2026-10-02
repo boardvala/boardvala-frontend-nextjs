@@ -66,6 +66,12 @@ const CARDS = [
     to: "/admin/blog",
     icon: "📝",
   },
+  {
+    title: "Survey Analytics",
+    desc: "View how users discover BoardVala.",
+    to: "/admin/survey",
+    icon: "📊",
+  },
 ];
 
 export default function AdminDashboard() {
