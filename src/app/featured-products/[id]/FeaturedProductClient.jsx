@@ -617,17 +617,13 @@ export default function FeaturedProductClient({ product, similar }) {
                 )}
 
                 {/* Studio controls */}
-                <div
-                  className="d-flex justify-content-center gap-2 mt-3 mb-2"
-                  style={{ padding: "12px 0" }}
-                >
+                <div className="mt-3 mb-2" style={{ padding: "12px 0" }}>
                   {photoPreview && (
-                    <>
+                    <div className="d-flex flex-wrap justify-content-center gap-2 mb-2">
                       <button
                         type="button"
                         className="btn btn-sm"
                         onClick={async () => {
-                          // Capture cropped image for 3D preview
                           const photoEl = document.querySelector(
                             ".led-photo-container",
                           );
@@ -657,7 +653,7 @@ export default function FeaturedProductClient({ product, similar }) {
                           fontWeight: 600,
                         }}
                       >
-                        <i className="bi bi-badge-3d me-1"></i>3D Preview
+                        <i className="bi bi-badge-3d me-1"></i>3D
                       </button>
 
                       <button
@@ -682,8 +678,7 @@ export default function FeaturedProductClient({ product, similar }) {
                         onClick={() => zoomRef.current?.resetTransform()}
                         style={{ borderRadius: "10px" }}
                       >
-                        <i className="bi bi-arrows-angle-contract me-1"></i>
-                        Reset
+                        <i className="bi bi-arrows-angle-contract"></i>
                       </button>
                       <button
                         type="button"
@@ -691,7 +686,7 @@ export default function FeaturedProductClient({ product, similar }) {
                         onClick={() => fileInputRef.current?.click()}
                         style={{ borderRadius: "10px" }}
                       >
-                        <i className="bi bi-arrow-repeat me-1"></i>Change
+                        <i className="bi bi-arrow-repeat"></i>
                       </button>
                       <button
                         type="button"
@@ -701,16 +696,18 @@ export default function FeaturedProductClient({ product, similar }) {
                       >
                         <i className="bi bi-trash"></i>
                       </button>
-                    </>
+                    </div>
                   )}
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-dark"
-                    onClick={() => setStudioMode(false)}
-                    style={{ borderRadius: "10px" }}
-                  >
-                    ← Back to Product
-                  </button>
+                  <div className="d-flex justify-content-center">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-dark"
+                      onClick={() => setStudioMode(false)}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      ← Back to Product
+                    </button>
+                  </div>
                 </div>
 
                 <input

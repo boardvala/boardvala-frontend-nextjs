@@ -6,7 +6,7 @@ export default function ProductCard({ product }) {
   // link — type नुसार वेगळा पेज
   let to = `/products/${product.id}`;
   if (product.type === "gallery") to = `/designs/${product.id}`;
-  if (product.type === "featured") to = `/featured-products/${product.id}`;
+  if (product.type === "featured") to = `/featured-products/${product.slug || product.id}`;
 
   // image — type नुसार योग्य helper
   let imageSrc;

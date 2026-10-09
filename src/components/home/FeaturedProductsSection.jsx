@@ -23,6 +23,7 @@ export default function FeaturedProductsSection() {
 
       const mapped = (products || []).map((p) => ({
         id: p._id,
+        slug: p.slug,
         type: "featured",
         name: p.title,
         price: p.price,

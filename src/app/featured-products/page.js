@@ -42,7 +42,7 @@ export default async function FeaturedProducts() {
             {products.map((product) => (
               <div className="col-6 col-md-4 col-lg-3" key={product._id}>
                 <Link
-                  href={`/featured-products/${product._id}`}
+                  href={`/featured-products/${product.slug || product._id}`}
                   className="fp-card"
                 >
                   <img
