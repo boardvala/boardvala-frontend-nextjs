@@ -5,7 +5,10 @@ import { useParams } from "next/navigation";
 import {
   getFeaturedOrderById,
   updateFeaturedOrderStatus,
+  updateFeaturedOrderShipping,
+  trackFeaturedOrder,
 } from "../../../../services/featuredOrderService";
+import Swal from "sweetalert2";
 
 export default function AdminFeaturedOrderDetails() {
   const { id } = useParams();
@@ -13,7 +16,13 @@ export default function AdminFeaturedOrderDetails() {
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
+  const [shippingForm, setShippingForm] = useState({
+    courierName: "",
+    trackingNumber: "",
+  });
+  const [updatingShipping, setUpdatingShipping] = useState(false);
   const [tracking, setTracking] = useState(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
 
   useEffect(() => {
     loadOrder();
@@ -24,6 +33,10 @@ export default function AdminFeaturedOrderDetails() {
       const data = await getFeaturedOrderById(id);
       setOrder(data.order);
       setStatus(data.order.status);
+      setShippingForm({
+        courierName: data.order.courierName || "",
+        trackingNumber: data.order.trackingNumber || "",
+      });
 
       // try {
       //   const t = await getAdminFeaturedOrderTracking(id);
@@ -41,11 +54,84 @@ export default function AdminFeaturedOrderDetails() {
   async function handleStatusUpdate() {
     try {
       await updateFeaturedOrderStatus(id, status);
-      alert("Status Updated Successfully");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Status Updated Successfully!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
       loadOrder();
     } catch (err) {
       console.error(err);
-      alert("Unable to Update Status");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update Status.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
+  }
+
+  async function handleUpdateShipping() {
+    setUpdatingShipping(true);
+    try {
+      const res = await updateFeaturedOrderShipping(id, shippingForm);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: res.emailSent
+          ? "Shipping saved & email sent to customer! ✉️"
+          : "Shipping details updated!",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    } catch (err) {
+      console.log("err", err);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Failed to update shipping.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } finally {
+      setUpdatingShipping(false);
+    }
+  }
+
+  async function handleTrackShipment() {
+    setTrackingLoading(true);
+    try {
+      const data = await trackFeaturedOrder(id);
+      if (data.success) {
+        setTracking(data.tracking);
+      } else {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: data.message || "Tracking not available yet.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Tracking failed.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } finally {
+      setTrackingLoading(false);
     }
   }
 
@@ -108,64 +194,300 @@ export default function AdminFeaturedOrderDetails() {
                   <strong>Pincode:</strong> {order.customerPincode}
                 </p>
 
-                <hr />
-                <h6 className="fw-bold mb-3" style={{ color: "#1b263b" }}>
-                  <i className="bi bi-truck me-2"></i>Shipping &amp; Tracking
-                </h6>
-                {tracking?.awbCode ? (
-                  <div
-                    className="p-3 rounded"
-                    style={{ background: "#eef2ff" }}
-                  >
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="text-muted">Courier</span>
-                      <span className="fw-semibold">
-                        {tracking.courierName}
-                      </span>
+                {/* ---- Shipping & Tracking ---- */}
+                <div className="card shadow-sm mt-4">
+                  <div className="card-body">
+                    <h5 className="fw-bold mb-3">
+                      <i className="bi bi-truck me-2"></i>Shipping & Tracking
+                    </h5>
+
+                    {/* Update Form */}
+                    <div className="row g-3">
+                      <div className="col-md-4">
+                        <label className="form-label fw-semibold">
+                          Courier Name
+                        </label>
+                        <input
+                          className="form-control"
+                          value={shippingForm.courierName}
+                          onChange={(e) =>
+                            setShippingForm((prev) => ({
+                              ...prev,
+                              courierName: e.target.value,
+                            }))
+                          }
+                          placeholder="e.g. BlueDart, Delhivery"
+                        />
+                      </div>
+                      <div className="col-md-4">
+                        <label className="form-label fw-semibold">
+                          Tracking Number
+                        </label>
+                        <input
+                          className="form-control"
+                          value={shippingForm.trackingNumber}
+                          onChange={(e) =>
+                            setShippingForm((prev) => ({
+                              ...prev,
+                              trackingNumber: e.target.value,
+                            }))
+                          }
+                          placeholder="Paste from Envia dashboard"
+                        />
+                      </div>
                     </div>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="text-muted">Tracking No (AWB)</span>
-                      <span className="fw-semibold">{tracking.awbCode}</span>
-                    </div>
-                    <div className="d-flex justify-content-between">
-                      <span className="text-muted">Status</span>
-                      <span
-                        className="fw-semibold"
-                        style={{ color: "#2563eb" }}
+
+                    <div className="d-flex gap-2 mt-3">
+                      <button
+                        className="btn btn-dark"
+                        onClick={handleUpdateShipping}
+                        disabled={updatingShipping}
                       >
-                        {tracking.shipmentStatus || tracking.orderStatus}
-                      </span>
+                        {updatingShipping ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <i className="bi bi-save me-2"></i>Save Shipping
+                          </>
+                        )}
+                      </button>
+
+                      {shippingForm.trackingNumber && (
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={handleTrackShipment}
+                          disabled={trackingLoading}
+                        >
+                          {trackingLoading ? (
+                            <>
+                              <span className="spinner-border spinner-border-sm me-2"></span>
+                              Tracking...
+                            </>
+                          ) : (
+                            <>
+                              <i className="bi bi-geo-alt me-2"></i>Track
+                              Shipment
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
+
+                    {/* Live Tracking Events */}
+                    {tracking && (
+                      <div className="mt-4">
+                        <div className="d-flex align-items-center gap-3 mb-3">
+                          <span
+                            className={`badge ${
+                              tracking.status === "Delivered"
+                                ? "bg-success"
+                                : tracking.status === "Shipped"
+                                  ? "bg-primary"
+                                  : "bg-warning text-dark"
+                            }`}
+                            style={{ fontSize: "0.85rem" }}
+                          >
+                            {tracking.status}
+                          </span>
+                          {tracking.carrier && (
+                            <span className="text-muted">
+                              via {tracking.carrier}
+                            </span>
+                          )}
+                          {tracking.estimatedDelivery && (
+                            <span className="text-muted">
+                              <i className="bi bi-calendar me-1"></i>
+                              Est:{" "}
+                              {new Date(
+                                tracking.estimatedDelivery,
+                              ).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                          )}
+                          {tracking.signedBy && (
+                            <span className="text-muted">
+                              <i className="bi bi-person-check me-1"></i>
+                              Signed by: {tracking.signedBy}
+                            </span>
+                          )}
+                        </div>
+                        {tracking.events && tracking.events.length > 0 ? (
+                          <div
+                            className="border rounded p-3"
+                            style={{ maxHeight: "300px", overflowY: "auto" }}
+                          >
+                            {tracking.events.map((event, i) => (
+                              <div
+                                key={i}
+                                className={`d-flex gap-3 ${i < tracking.events.length - 1 ? "mb-3 pb-3 border-bottom" : ""}`}
+                              >
+                                <div>
+                                  <i
+                                    className={`bi ${i === 0 ? "bi-geo-alt-fill text-primary" : "bi-circle text-muted"}`}
+                                    style={{
+                                      fontSize: i === 0 ? "1.1rem" : "0.7rem",
+                                    }}
+                                  ></i>
+                                </div>
+                                <div>
+                                  <div
+                                    className="fw-semibold"
+                                    style={{ fontSize: "0.9rem" }}
+                                  >
+                                    {event.description}
+                                  </div>
+                                  <div
+                                    className="text-muted"
+                                    style={{ fontSize: "0.8rem" }}
+                                  >
+                                    {event.location && (
+                                      <span className="me-3">
+                                        <i className="bi bi-geo me-1"></i>
+                                        {event.location}
+                                      </span>
+                                    )}
+                                    {event.date && (
+                                      <span>
+                                        <i className="bi bi-clock me-1"></i>
+                                        {new Date(event.date).toLocaleString(
+                                          "en-IN",
+                                          {
+                                            day: "numeric",
+                                            month: "short",
+                                            year: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          },
+                                        )}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-muted mb-0">
+                            No tracking events available yet.
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div
-                    className="p-3 rounded text-muted"
-                    style={{ background: "#f1f5f9" }}
-                  >
-                    <i className="bi bi-clock-history me-2"></i>
-                    Not shipped yet. Assign a courier in Shiprocket to generate
-                    tracking.
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="col-md-6">
             <div className="card shadow mb-4">
-              <div className="card-header">Product</div>
-              <div className="card-body text-center">
-                {order.previewImage ? (
-                  <img
-                    src={order.previewImage}
-                    alt={order.title}
-                    className="img-fluid rounded mb-3"
-                    style={{ maxHeight: "350px", objectFit: "contain" }}
-                  />
-                ) : (
-                  <div className="text-muted mb-3">No image</div>
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <span>Product</span>
+                {order.orderType === "ledFrame" && (
+                  <span
+                    className="badge"
+                    style={{ background: "#2563eb", color: "#fff" }}
+                  >
+                    LED Frame
+                  </span>
                 )}
-                <h5 className="fw-semibold mb-0">{order.title}</h5>
+              </div>
+              <div className="card-body text-center">
+                {order.orderType === "ledFrame" ? (
+                  <>
+                    <h5 className="fw-semibold mb-2">{order.title}</h5>
+                    {order.frameSize && (
+                      <p className="mb-3">
+                        <span
+                          className="badge bg-light text-dark"
+                          style={{ fontSize: "0.85rem" }}
+                        >
+                          📐 Frame Size: {order.frameSize}
+                        </span>
+                      </p>
+                    )}
+                    {order.customerPhoto ? (
+                      <>
+                        <p
+                          className="fw-semibold text-muted mb-2"
+                          style={{ fontSize: "0.85rem" }}
+                        >
+                          📷 Customer's Photo (Print-Ready)
+                        </p>
+                        <div
+                          style={{
+                            border: "2px solid #e2e8f0",
+                            overflow: "hidden",
+                            display: "inline-block",
+                          }}
+                        >
+                          <img
+                            src={order.customerPhoto}
+                            alt="Customer uploaded photo"
+                            className="img-fluid"
+                            style={{ maxHeight: "350px", objectFit: "contain" }}
+                          />
+                        </div>
+                        <div className="mt-3">
+                          <a
+                            href={order.customerPhoto}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-sm btn-outline-primary me-2"
+                          >
+                            <i className="bi bi-eye me-1"></i>View Full Size
+                          </a>
+                          <button
+                            className="btn btn-sm btn-dark"
+                            onClick={async () => {
+                              try {
+                                const res = await fetch(order.customerPhoto);
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = `LED-Frame-${order._id.slice(-6)}.jpg`;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                              } catch {
+                                window.open(order.customerPhoto, "_blank");
+                              }
+                            }}
+                          >
+                            <i className="bi bi-download me-1"></i>Download
+                            Photo
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-muted">
+                        No customer photo uploaded
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {order.previewImage ? (
+                      <img
+                        src={order.previewImage}
+                        alt={order.title}
+                        className="img-fluid rounded mb-3"
+                        style={{ maxHeight: "350px", objectFit: "contain" }}
+                      />
+                    ) : (
+                      <div className="text-muted mb-3">No image</div>
+                    )}
+                    <h5 className="fw-semibold mb-0">{order.title}</h5>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -240,7 +562,24 @@ export default function AdminFeaturedOrderDetails() {
               <div className="col-md-6">
                 <p>
                   <strong>Product:</strong> {order.title}
+                  {order.orderType === "ledFrame" && (
+                    <span
+                      className="badge ms-2"
+                      style={{
+                        background: "#2563eb",
+                        color: "#fff",
+                        fontSize: "0.7rem",
+                      }}
+                    >
+                      LED Frame
+                    </span>
+                  )}
                 </p>
+                {order.orderType === "ledFrame" && order.frameSize && (
+                  <p>
+                    <strong>Frame Size:</strong> {order.frameSize}
+                  </p>
+                )}
                 <p>
                   <strong>Unit Price:</strong> ₹ {order.price}
                 </p>

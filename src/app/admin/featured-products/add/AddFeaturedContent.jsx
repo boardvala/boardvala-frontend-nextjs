@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { createFeaturedProduct } from "../../../../services/featuredProductService";
 
-
 export default function AddFeaturedProduct() {
   const router = useRouter();
 
@@ -20,8 +19,9 @@ export default function AddFeaturedProduct() {
     category: "",
     inStock: true,
     active: true,
+    isCustomizable: false,
   });
-
+  const [sizes, setSizes] = useState([]);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -108,6 +108,10 @@ export default function AddFeaturedProduct() {
     data.append("category", form.category);
     data.append("inStock", form.inStock);
     data.append("active", form.active);
+    data.append("isCustomizable", form.isCustomizable);
+    if (sizes.length > 0) {
+      data.append("sizes", JSON.stringify(sizes));
+    }
 
     images.forEach((image) => {
       data.append("images", image);
@@ -240,6 +244,100 @@ export default function AddFeaturedProduct() {
                     placeholder="e.g. Home Decor (optional)"
                   />
                 </div>
+
+                {/* Customizable (LED Frame) */}
+              <div className="col-md-6 mb-3">
+                <div className="form-check mb-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="isCustomizable"
+                    checked={form.isCustomizable}
+                    onChange={(e) =>
+                      setForm({ ...form, isCustomizable: e.target.checked })
+                    }
+                  />
+                  <label className="form-check-label" htmlFor="isCustomizable">
+                    <strong>Customizable</strong> — Customer must upload photo
+                    (LED Frame)
+                  </label>
+                </div>
+              </div>
+
+                {/* Sizes — only if customizable */}
+              <div className="col-md-6 mb-3">
+                {form.isCustomizable && (
+                  <div className="card border-0 bg-light p-3 mb-3">
+                    <h6 className="fw-bold mb-3">
+                      <i className="bi bi-rulers me-2"></i>Frame Sizes & Pricing
+                    </h6>
+
+                    {sizes.map((s, i) => (
+                      <div
+                        key={i}
+                        className="d-flex gap-2 mb-2 align-items-center"
+                      >
+                        <input
+                          className="form-control form-control-sm"
+                          placeholder="Name (A4)"
+                          value={s.name}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].name = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "100px" }}
+                        />
+                        <input
+                          className="form-control form-control-sm"
+                          placeholder="Dimensions (8×12 inch)"
+                          value={s.dimensions}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].dimensions = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "160px" }}
+                        />
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          placeholder="Price (₹)"
+                          value={s.price}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].price = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "110px" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() =>
+                            setSizes(sizes.filter((_, idx) => idx !== i))
+                          }
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-dark mt-1"
+                      onClick={() =>
+                        setSizes([
+                          ...sizes,
+                          { name: "", dimensions: "", price: "" },
+                        ])
+                      }
+                    >
+                      <i className="bi bi-plus-lg me-1"></i>Add Size
+                    </button>
+                  </div>
+                )}
+                </div>
               </div>
 
               <div className="mb-3">
@@ -287,5 +385,3 @@ export default function AddFeaturedProduct() {
     </>
   );
 }
-
-

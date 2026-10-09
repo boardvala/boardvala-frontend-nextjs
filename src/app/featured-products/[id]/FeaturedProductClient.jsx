@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import ProductCard from "../../../components/product/ProductCard";
 import ReviewSection from "../../../components/review/ReviewSection";
 import { getGalleryImage } from "../../../utils/imageUtils";
 import { checkDeliveryByPincode } from "../../../services/deliveryService";
+import { checkImageQuality } from "../../../utils/imageQuality";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import dynamic from "next/dynamic";
+const LED3DPreview = dynamic(
+  () => import("../../../components/led/LED3DPreview"),
+  { ssr: false },
+);
 import "../../../styles/featured-details.css";
 
 export default function FeaturedProductClient({ product, similar }) {
@@ -18,9 +25,28 @@ export default function FeaturedProductClient({ product, similar }) {
   const [checking, setChecking] = useState(false);
   const [deliveryResult, setDeliveryResult] = useState(null);
 
+  // LED Frame — studio mode
+  const [studioMode, setStudioMode] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [uploadedPhoto, setUploadedPhoto] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState("");
+  const fileInputRef = useRef(null);
+
+  // Photo zoom & drag
+  // Photo zoom & drag (react-zoom-pan-pinch)
+  const zoomRef = useRef(null);
+  const [show3D, setShow3D] = useState(false);
+  const [croppedFor3D, setCroppedFor3D] = useState(null);
+  const [imageQuality, setImageQuality] = useState(null);
+  const [photoDimensions, setPhotoDimensions] = useState(null);
+
   useEffect(() => {
     if (product?.images?.length > 0) {
       setSelectedImage(getGalleryImage(product.images[0]));
+    }
+    // Auto-select first size (LED Frame)
+    if (product?.isCustomizable && product?.sizes?.length > 0) {
+      setSelectedSize(product.sizes[0]);
     }
   }, [product]);
 
@@ -40,52 +66,313 @@ export default function FeaturedProductClient({ product, similar }) {
 
   // ---------- Pricing ----------
   const isBanner = product.category?.toLowerCase() === "banner";
-  const selectedPrice = product.price;
+  const isCustomizable = product.isCustomizable && product.sizes?.length > 0;
+  const selectedPrice =
+    isCustomizable && selectedSize ? selectedSize.price : product.price;
+
+  // Parse size dimensions string "9 × 12 inch" → { w: 9, h: 12 }
+  function parseSizeDimensions(dimStr) {
+    const match = dimStr?.match(/(\d+(?:\.\d+)?)\s*[xX×*]\s*(\d+(?:\.\d+)?)/);
+    if (!match) return null;
+    return { w: Number(match[1]), h: Number(match[2]) };
+  }
+
+  // ---------- Photo Upload (LED Frame) ----------
+  function handlePhotoUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      Swal.fire({ icon: "warning", title: "Only image files allowed." });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      Swal.fire({ icon: "warning", title: "File size must be under 10MB." });
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setUploadedPhoto(file);
+    setPhotoPreview(url);
+    if (zoomRef.current) zoomRef.current.resetTransform();
+
+    // Check image quality
+    const img = new Image();
+    img.onload = () => {
+      setPhotoDimensions({ w: img.naturalWidth, h: img.naturalHeight });
+      if (selectedSize) {
+        const dims = parseSizeDimensions(selectedSize.dimensions);
+        console.log("dims", dims);
+        if (dims) {
+          const quality = checkImageQuality(
+            img.naturalWidth,
+            img.naturalHeight,
+            dims.w,
+            dims.h,
+            "fixed",
+          );
+          setImageQuality(quality);
+        }
+      }
+    };
+    img.src = url;
+  }
+
+  function handleRemovePhoto() {
+    setUploadedPhoto(null);
+    setPhotoPreview("");
+    setImageQuality(null);
+    setPhotoDimensions(null);
+    if (zoomRef.current) zoomRef.current.resetTransform();
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  // Generate preview — same proven approach as custom design studio
+  async function generateLedPreview(
+    photoSrc,
+    scale,
+    positionX,
+    positionY,
+    frameW,
+    frameH,
+    isThumbnail = false,
+  ) {
+    const MAX_EXPORT = isThumbnail ? 300 : 3000;
+    const JPEG_QUALITY = isThumbnail ? 0.6 : 0.9;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+
+      img.onload = () => {
+        try {
+          const natW = img.naturalWidth;
+          const natH = img.naturalHeight;
+
+          // 1. object-fit: cover dimensions
+          const imageAspect = natW / natH;
+          const frameAspect = frameW / frameH;
+
+          let baseW, baseH;
+          if (imageAspect > frameAspect) {
+            baseH = frameH;
+            baseW = frameH * imageAspect;
+          } else {
+            baseW = frameW;
+            baseH = frameW / imageAspect;
+          }
+
+          const baseX = (frameW - baseW) / 2;
+          const baseY = (frameH - baseH) / 2;
+
+          // 2. Transformed image rectangle
+          const transformedX = positionX + baseX * scale;
+          const transformedY = positionY + baseY * scale;
+          const transformedW = baseW * scale;
+          const transformedH = baseH * scale;
+
+          // 3. Visible area (intersection with frame)
+          const visibleLeft = Math.max(0, transformedX);
+          const visibleTop = Math.max(0, transformedY);
+          const visibleRight = Math.min(frameW, transformedX + transformedW);
+          const visibleBottom = Math.min(frameH, transformedY + transformedH);
+
+          if (visibleRight <= visibleLeft || visibleBottom <= visibleTop) {
+            resolve(null);
+            return;
+          }
+
+          // 4. Map to original image pixels
+          const srcX = ((visibleLeft - transformedX) / transformedW) * natW;
+          const srcY = ((visibleTop - transformedY) / transformedH) * natH;
+          const srcW = ((visibleRight - visibleLeft) / transformedW) * natW;
+          const srcH = ((visibleBottom - visibleTop) / transformedH) * natH;
+
+          // 5. Safe clamp
+          const safeSrcX = Math.max(0, Math.min(srcX, natW));
+          const safeSrcY = Math.max(0, Math.min(srcY, natH));
+          const safeSrcRight = Math.max(safeSrcX, Math.min(srcX + srcW, natW));
+          const safeSrcBottom = Math.max(safeSrcY, Math.min(srcY + srcH, natH));
+          const safeSrcW = safeSrcRight - safeSrcX;
+          const safeSrcH = safeSrcBottom - safeSrcY;
+
+          if (safeSrcW <= 0 || safeSrcH <= 0) {
+            resolve(null);
+            return;
+          }
+
+          // 6. Export dimensions
+          const cropAspect = safeSrcW / safeSrcH;
+          let exportW, exportH;
+          if (cropAspect >= 1) {
+            exportW = Math.min(Math.round(safeSrcW), MAX_EXPORT);
+            exportH = Math.round(exportW / cropAspect);
+          } else {
+            exportH = Math.min(Math.round(safeSrcH), MAX_EXPORT);
+            exportW = Math.round(exportH * cropAspect);
+          }
+
+          // 7. Canvas draw + export
+          const canvas = document.createElement("canvas");
+          canvas.width = exportW;
+          canvas.height = exportH;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            resolve(null);
+            return;
+          }
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(0, 0, exportW, exportH);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+
+          ctx.drawImage(
+            img,
+            safeSrcX,
+            safeSrcY,
+            safeSrcW,
+            safeSrcH,
+            0,
+            0,
+            exportW,
+            exportH,
+          );
+          resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+        } catch {
+          resolve(null);
+        }
+      };
+
+      img.onerror = () => resolve(null);
+      img.src = photoSrc;
+    });
+  }
 
   // ---------- Cart ----------
- function handleAddToCart() {
-  const cart = JSON.parse(localStorage.getItem("customCart")) || [];
+  async function handleAddToCart() {
+    const cart = JSON.parse(localStorage.getItem("customCart")) || [];
 
-  // हाच featured product आधीच cart मध्ये आहे का
-  const existingIndex = cart.findIndex(
-    (item) =>
-      item.orderType === "featuredProduct" &&
-      item.featuredProductId === product._id,
-  );
+    // Customizable — photo required!
+    if (isCustomizable && !photoPreview) {
+      Swal.fire({
+        icon: "warning",
+        title: "Photo Required",
+        text: "Please upload your photo to order this frame.",
+      });
+      return;
+    }
 
-  if (existingIndex >= 0) {
-    cart[existingIndex].quantity += quantity;
-  } else {
-    cart.push({
-      id: Date.now(),
-      orderType: "featuredProduct",
-      featuredProductId: product._id,
-      name: product.title,
-      price: product.price,
-      previewImage: product.images?.[0]
-        ? getGalleryImage(product.images[0])
-        : "",
-      quantity,
-    });
+    // LED Frame — capture cropped/zoomed photo
+    let cartThumbnail = null;
+    let croppedPhoto = null;
+
+    if (isCustomizable && photoPreview) {
+      try {
+        const photoEl = document.querySelector(".led-photo-container");
+        const frameW = photoEl?.offsetWidth || 300;
+        const frameH = photoEl?.offsetHeight || 400;
+
+        // Get zoom state from react-zoom-pan-pinch
+        const state = zoomRef.current?.state || {};
+        const scale = Number(state.scale) || 1;
+        const positionX = Number(state.positionX) || 0;
+        const positionY = Number(state.positionY) || 0;
+
+        // Generate preview (same as custom design studio!)
+        croppedPhoto = await generateLedPreview(
+          photoPreview,
+          scale,
+          positionX,
+          positionY,
+          frameW,
+          frameH,
+        );
+
+        // Thumbnail (small version for cart)
+        cartThumbnail = await generateLedPreview(
+          photoPreview,
+          scale,
+          positionX,
+          positionY,
+          frameW,
+          frameH,
+          true,
+        );
+
+        if (!croppedPhoto) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Could not capture photo. Please adjust zoom and try again.",
+            showConfirmButton: false,
+            timer: 3000,
+          });
+          return;
+        }
+      } catch (err) {
+        console.log("Capture error:", err);
+        cartThumbnail = photoPreview;
+        croppedPhoto = photoPreview;
+      }
+    }
+
+    // Duplicate check — same product already in cart?
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.orderType === (isCustomizable ? "ledFrame" : "featuredProduct") &&
+        item.featuredProductId === product._id &&
+        (!isCustomizable ||
+          item.frameSize ===
+            `${selectedSize?.name} (${selectedSize?.dimensions})`),
+    );
+
+    if (existingIndex >= 0 && !isCustomizable) {
+      // Normal product — quantity increase
+      cart[existingIndex].quantity += quantity;
+    } else {
+      // New item (LED frame = always new — each photo different)
+      cart.push({
+        id: Date.now(),
+        orderType: isCustomizable ? "ledFrame" : "featuredProduct",
+        featuredProductId: product._id,
+        name: product.title,
+        previewImage:
+          isCustomizable && cartThumbnail
+            ? cartThumbnail
+            : product.images?.[0]
+              ? getGalleryImage(product.images[0])
+              : "",
+        price: selectedPrice,
+        quantity,
+        material: product.material || "",
+        frameSize:
+          isCustomizable && selectedSize
+            ? `${selectedSize.name} (${selectedSize.dimensions})`
+            : product.size || "",
+        isCustomizable: isCustomizable || false,
+        customPhoto: isCustomizable ? croppedPhoto : null,
+      });
+    }
+
+    try {
+      localStorage.setItem("customCart", JSON.stringify(cart));
+      window.dispatchEvent(new Event("cartChanged"));
+    } catch (e) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "warning",
+        title: "Cart storage full. Please checkout current items first.",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+
+    router.push("/cart");
   }
-
-  try {
-    localStorage.setItem("customCart", JSON.stringify(cart));
-    window.dispatchEvent(new Event("cartChanged"));
-  } catch (e) {
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon: "warning",
-      title: "Cart storage full. Please checkout current items first.",
-      showConfirmButton: false,
-      timer: 3000,
-    });
-    return;
-  }
-
-  router.push("/cart");
-}
 
   // ---------- Delivery Check ----------
   async function handleCheckDelivery() {
@@ -106,28 +393,364 @@ export default function FeaturedProductClient({ product, similar }) {
       <div className="container">
         <div className="fpd-grid">
           {/* ---- Media (left) ---- */}
+
+          {/* ---- Media (left) ---- */}
           <div className="fpd-media">
-            {selectedImage && (
-              <img
-                src={selectedImage}
-                alt={product.title}
-                className="fpd-main-img"
-              />
-            )}
-            {product.images.length > 1 && (
-              <div className="fpd-thumbs">
-                {product.images.map((image, index) => (
+            {isCustomizable && studioMode ? (
+              /* ---- STUDIO MODE ---- */
+
+              <div className="led-studio">
+                {/* Bedroom + Frame + Photo Mockup */}
+                <div
+                  className="led-mockup-container"
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                  }}
+                >
+                  {/* Layer 1: Bedroom Background */}
                   <img
-                    key={index}
-                    src={getGalleryImage(image)}
-                    alt={`${product.title} ${index + 1}`}
-                    className={`fpd-thumb ${
-                      selectedImage === getGalleryImage(image) ? "active" : ""
-                    }`}
-                    onClick={() => setSelectedImage(getGalleryImage(image))}
+                    src="/studio/Wall-bedroom.png"
+                    alt="Bedroom wall background"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                    }}
                   />
-                ))}
+
+                  {/* Layer 2: User Photo (inside frame area) */}
+                  {photoPreview && (
+                    <div
+                      className="led-photo-container"
+                      style={{
+                        position: "absolute",
+                        top: "9.5%",
+                        left: "34%",
+                        width: "36%",
+                        height: "49%",
+                        overflow: "hidden",
+                        zIndex: 4,
+                      }}
+                    >
+                      <TransformWrapper
+                        ref={zoomRef}
+                        initialScale={1}
+                        minScale={0.5}
+                        maxScale={3}
+                        wheel={{ step: 0.001 }}
+                        pinch={{ step: 5 }}
+                        doubleClick={{ disabled: true }}
+                      >
+                        <TransformComponent
+                          wrapperStyle={{ width: "100%", height: "100%" }}
+                          contentStyle={{ width: "100%", height: "100%" }}
+                        >
+                          <img
+                            src={photoPreview}
+                            alt="Your photo inside LED frame"
+                            draggable={false}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </TransformComponent>
+                      </TransformWrapper>
+                    </div>
+                  )}
+
+                  {/* Layer 3: LED Frame (on top) */}
+                  <img
+                    src="/studio/led-frame.jpg"
+                    alt="LED Slim Photo Frame"
+                    style={{
+                      position: "absolute",
+                      top: "8%",
+                      left: "32%",
+                      width: "40%",
+                      height: "52%",
+                      objectFit: "fill",
+                      zIndex: 3,
+                    }}
+                  />
+
+                  {/* LED Glow Effect */}
+                  {photoPreview && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "8%",
+                        left: "32%",
+                        width: "40%",
+                        height: "52%",
+                        boxShadow:
+                          "0 0 40px rgba(255,255,255,0.25), 0 0 80px rgba(255,255,255,0.1)",
+                        zIndex: 4,
+                        pointerEvents: "none",
+                        borderRadius: "2px",
+                      }}
+                    />
+                  )}
+
+                  {/* Upload placeholder (no photo yet) */}
+                  {!photoPreview && (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        position: "absolute",
+                        top: "10%",
+                        left: "34%",
+                        width: "36%",
+                        height: "48%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        zIndex: 6,
+                        background: "transparent",
+                        gap: "8px",
+                        padding: "10px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                          border: "2px dashed #94a3b8",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <i
+                          className="bi bi-camera"
+                          style={{ fontSize: "1.4rem", color: "#64748b" }}
+                        ></i>
+                      </div>
+                      <p
+                        style={{
+                          color: "#475569",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          margin: 0,
+                          textAlign: "center",
+                        }}
+                      >
+                        Tap to upload
+                      </p>
+                      <p
+                        style={{
+                          color: "#94a3b8",
+                          fontSize: "0.65rem",
+                          margin: 0,
+                        }}
+                      >
+                        your photo here
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Size label */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "12px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "rgba(0,0,0,0.6)",
+                      color: "#fff",
+                      padding: "4px 14px",
+                      borderRadius: "20px",
+                      fontSize: "0.72rem",
+                      fontWeight: 600,
+                      zIndex: 5,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {selectedSize
+                      ? `${selectedSize.name} — ${selectedSize.dimensions}`
+                      : "Select size"}
+                  </div>
+                </div>
+
+                {/* Image Quality Indicator */}
+                {photoPreview && imageQuality && (
+                  <div
+                    className="d-flex align-items-center justify-content-center gap-2 mt-3"
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "10px",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      background:
+                        imageQuality.level === "excellent"
+                          ? "rgba(22,163,74,0.15)"
+                          : imageQuality.level === "good"
+                            ? "rgba(217,119,6,0.15)"
+                            : "rgba(220,38,38,0.15)",
+                      color:
+                        imageQuality.level === "excellent"
+                          ? "#16a34a"
+                          : imageQuality.level === "good"
+                            ? "#d97706"
+                            : "#dc2626",
+                    }}
+                  >
+                    <i
+                      className={`bi ${
+                        imageQuality.level === "excellent"
+                          ? "bi-check-circle-fill"
+                          : imageQuality.level === "good"
+                            ? "bi-exclamation-triangle-fill"
+                            : "bi-x-circle-fill"
+                      }`}
+                    ></i>
+                    <span>{imageQuality.message}</span>
+                    <small style={{ opacity: 0.7 }}>
+                      ({imageQuality.dpi} DPI)
+                    </small>
+                  </div>
+                )}
+
+                {/* Studio controls */}
+                <div
+                  className="d-flex justify-content-center gap-2 mt-3 mb-2"
+                  style={{ padding: "12px 0" }}
+                >
+                  {photoPreview && (
+                    <>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        onClick={async () => {
+                          // Capture cropped image for 3D preview
+                          const photoEl = document.querySelector(
+                            ".led-photo-container",
+                          );
+                          const frameW = photoEl?.offsetWidth || 300;
+                          const frameH = photoEl?.offsetHeight || 400;
+                          const state = zoomRef.current?.state || {};
+                          const scale = Number(state.scale) || 1;
+                          const positionX = Number(state.positionX) || 0;
+                          const positionY = Number(state.positionY) || 0;
+
+                          const cropped = await generateLedPreview(
+                            photoPreview,
+                            scale,
+                            positionX,
+                            positionY,
+                            frameW,
+                            frameH,
+                          );
+                          setCroppedFor3D(cropped || photoPreview);
+                          setShow3D(true);
+                        }}
+                        style={{
+                          borderRadius: "10px",
+                          background:
+                            "linear-gradient(135deg, #2563eb, #7c3aed)",
+                          color: "#fff",
+                          fontWeight: 600,
+                        }}
+                      >
+                        <i className="bi bi-badge-3d me-1"></i>3D Preview
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        onClick={() => zoomRef.current?.zoomIn(0.1)}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <i className="bi bi-zoom-in"></i>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        onClick={() => zoomRef.current?.zoomOut(0.1)}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <i className="bi bi-zoom-out"></i>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        onClick={() => zoomRef.current?.resetTransform()}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <i className="bi bi-arrows-angle-contract me-1"></i>
+                        Reset
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <i className="bi bi-arrow-repeat me-1"></i>Change
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={handleRemovePhoto}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-dark"
+                    onClick={() => setStudioMode(false)}
+                    style={{ borderRadius: "10px" }}
+                  >
+                    ← Back to Product
+                  </button>
+                </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  style={{ display: "none" }}
+                />
               </div>
+            ) : (
+              /* ---- NORMAL PRODUCT IMAGES ---- */
+              <>
+                {selectedImage && (
+                  <img
+                    src={selectedImage}
+                    alt={product.title}
+                    className="fpd-main-img"
+                  />
+                )}
+                {product.images.length > 1 && (
+                  <div className="fpd-thumbs">
+                    {product.images.map((image, index) => {
+                      const src = getGalleryImage(image);
+                      if (!src) return null;
+                      return (
+                        <img
+                          key={index}
+                          src={src}
+                          alt={`${product.title} ${index + 1}`}
+                          className={`fpd-thumb ${
+                            selectedImage === src ? "active" : ""
+                          }`}
+                          onClick={() => setSelectedImage(src)}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -142,6 +765,13 @@ export default function FeaturedProductClient({ product, similar }) {
             <div className="fpd-price">
               {isBanner ? (
                 <span style={{ fontSize: "1.1rem" }}>Starting @ ₹ 500</span>
+              ) : isCustomizable ? (
+                <span>
+                  ₹ {selectedPrice}{" "}
+                  <small className="text-muted" style={{ fontSize: "0.7rem" }}>
+                    ({selectedSize?.name} size)
+                  </small>
+                </span>
               ) : (
                 `₹ ${selectedPrice}`
               )}
@@ -167,13 +797,15 @@ export default function FeaturedProductClient({ product, similar }) {
                   <span className="text-muted">Material</span>
                   <span className="fw-semibold">{product.material || "-"}</span>
                 </div>
-                <div
-                  className="d-flex justify-content-between px-3 py-2"
-                  style={{ borderTop: "1px solid #e5e7eb" }}
-                >
-                  <span className="text-muted">Size</span>
-                  <span className="fw-semibold">{product.size || "-"}</span>
-                </div>
+                {!isCustomizable && (
+                  <div
+                    className="d-flex justify-content-between px-3 py-2"
+                    style={{ borderTop: "1px solid #e5e7eb" }}
+                  >
+                    <span className="text-muted">Size</span>
+                    <span className="fw-semibold">{product.size || "-"}</span>
+                  </div>
+                )}
                 <div
                   className="d-flex justify-content-between px-3 py-2"
                   style={{
@@ -197,6 +829,124 @@ export default function FeaturedProductClient({ product, similar }) {
                 </div>
               </div>
             </div>
+
+            {/* Size Selector — LED Frame */}
+            {isCustomizable && product.sizes?.length > 0 && (
+              <div className="mt-4">
+                <p className="fpd-section-head">Choose Size</p>
+                <div className="d-flex flex-wrap gap-2">
+                  {product.sizes.map((s) => (
+                    <button
+                      key={s.name}
+                      type="button"
+                      className={`btn btn-sm ${
+                        selectedSize?.name === s.name
+                          ? "btn-dark"
+                          : "btn-outline-dark"
+                      }`}
+                      onClick={() => {
+                        setSelectedSize(s);
+                        // Re-check quality for new size
+                        if (photoDimensions) {
+                          const dims = parseSizeDimensions(s.dimensions);
+                          if (dims) {
+                            const quality = checkImageQuality(
+                              photoDimensions.w,
+                              photoDimensions.h,
+                              dims.w,
+                              dims.h,
+                              "fixed",
+                            );
+                            setImageQuality(quality);
+                          }
+                        }
+                      }}
+                      style={{ borderRadius: "10px", padding: "8px 16px" }}
+                    >
+                      <strong>{s.name}</strong>
+                      <br />
+                      <small>
+                        {s.dimensions} — ₹{s.price}
+                      </small>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Photo Upload — LED Frame */}
+            {/* Customize Button — LED Frame */}
+            {isCustomizable && !studioMode && (
+              <div className="mt-4">
+                <button
+                  className="btn w-100 text-white fw-bold"
+                  onClick={() => setStudioMode(true)}
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #1b263b 0%, #2563eb 100%)",
+                    padding: "14px",
+                    borderRadius: "12px",
+                    fontSize: "1rem",
+                    border: "none",
+                  }}
+                >
+                  <i className="bi bi-palette me-2"></i>
+                  Customize — Upload Your Photo →
+                </button>
+                <p
+                  className="text-muted text-center mt-2"
+                  style={{ fontSize: "0.78rem" }}
+                >
+                  Upload your photo, see it inside the LED frame, then order!
+                </p>
+              </div>
+            )}
+
+            {/* Studio info — when in studio mode */}
+            {isCustomizable && studioMode && (
+              <div className="mt-4">
+                <div
+                  className="p-3 rounded"
+                  style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}
+                >
+                  {photoPreview ? (
+                    <div className="d-flex align-items-center gap-2">
+                      <i
+                        className="bi bi-check-circle-fill"
+                        style={{ color: "#16a34a", fontSize: "1.2rem" }}
+                      ></i>
+                      <div>
+                        <p
+                          className="fw-bold mb-0"
+                          style={{ color: "#16a34a", fontSize: "0.9rem" }}
+                        >
+                          Photo uploaded!
+                        </p>
+                        <p
+                          className="mb-0 text-muted"
+                          style={{ fontSize: "0.78rem" }}
+                        >
+                          Your photo will be printed and fitted in the frame.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="d-flex align-items-center gap-2">
+                      <i
+                        className="bi bi-info-circle"
+                        style={{ color: "#2563eb", fontSize: "1.2rem" }}
+                      ></i>
+                      <p
+                        className="mb-0"
+                        style={{ fontSize: "0.85rem", color: "#334155" }}
+                      >
+                        Click on the frame to upload your photo.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Quantity + Cart + Delivery */}
             <div
@@ -231,10 +981,16 @@ export default function FeaturedProductClient({ product, similar }) {
                 <button
                   className="fpd-cart-btn"
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={
+                    !product.inStock || (isCustomizable && !photoPreview)
+                  }
                   style={{ whiteSpace: "nowrap" }}
                 >
-                  {product.inStock ? "Add to Cart" : "Out of Stock"}
+                  {!product.inStock
+                    ? "Out of Stock"
+                    : isCustomizable && !photoPreview
+                      ? "📷 Upload Photo to Order"
+                      : "Add to Cart"}
                 </button>
 
                 <div
@@ -475,6 +1231,16 @@ export default function FeaturedProductClient({ product, similar }) {
 
       {/* ---- Reviews ---- */}
       <ReviewSection featuredProductId={product._id} />
+      {/* ---- 3D Preview Modal ---- */}
+      {show3D && croppedFor3D && (
+        <LED3DPreview
+          photoSrc={croppedFor3D}
+          onClose={() => {
+            setShow3D(false);
+            setCroppedFor3D(null);
+          }}
+        />
+      )}
     </div>
   );
 }

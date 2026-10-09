@@ -6,7 +6,6 @@ import { getOrders } from "../../../services/orderService";
 import { getMyCustomDesignOrders } from "../../../services/customDesignService";
 import { getMyFeaturedOrders } from "../../../services/featuredOrderService";
 
-
 export default function MyOrdersContent() {
   const [orders, setOrders] = useState([]);
   const [customOrders, setCustomOrders] = useState([]);
@@ -163,7 +162,21 @@ export default function MyOrdersContent() {
         {featuredOrders.map((order) => (
           <div key={order._id} className="card shadow-sm mb-4">
             <div className="card-header d-flex justify-content-between align-items-center">
-              <strong>Order ID #{order._id.slice(-6).toUpperCase()}</strong>
+              <div>
+                <strong>Order ID #{order._id.slice(-6).toUpperCase()}</strong>
+                {order.orderType === "ledFrame" && (
+                  <span
+                    className="badge ms-2"
+                    style={{
+                      background: "#2563eb",
+                      color: "#fff",
+                      fontSize: "0.65rem",
+                    }}
+                  >
+                    LED Frame
+                  </span>
+                )}
+              </div>
 
               <span className={`badge ${featuredBadge(order.status)}`}>
                 {order.status}
@@ -174,7 +187,11 @@ export default function MyOrdersContent() {
               <div className="row align-items-center">
                 <div className="col-md-3 text-center">
                   <img
-                    src={order.previewImage}
+                    src={
+                      order.orderType === "ledFrame" && order.customerPhoto
+                        ? order.customerPhoto
+                        : order.previewImage
+                    }
                     alt={order.title}
                     className="img-fluid rounded"
                     style={{ maxHeight: "120px", objectFit: "contain" }}
@@ -185,6 +202,14 @@ export default function MyOrdersContent() {
                   <p className="mb-1">
                     <strong>{order.title}</strong>
                   </p>
+                  {order.orderType === "ledFrame" && order.frameSize && (
+                    <p
+                      className="mb-1 text-primary"
+                      style={{ fontSize: "0.85rem" }}
+                    >
+                      📐 Size: {order.frameSize}
+                    </p>
+                  )}
                   <p className="mb-1">
                     Qty: {order.quantity} &nbsp;|&nbsp; Total: ₹{" "}
                     {order.totalAmount}

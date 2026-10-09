@@ -167,7 +167,24 @@ export default function Checkout() {
             });
 
             for (const item of customData) {
-              if (item.orderType === "featuredProduct") {
+              if (item.orderType === "ledFrame") {
+                // LED Frame order (with customer photo)
+                await createFeaturedOrder({
+                  featuredProductId: item.featuredProductId,
+                  quantity: item.quantity,
+                  customerName: form.customerName,
+                  customerPhone: form.customerPhone,
+                  customerEmail: form.customerEmail,
+                  customerAddress: form.customerAddress,
+                  customerCity: form.customerCity,
+                  customerState: form.customerState,
+                  customerPincode: form.customerPincode,
+                  payment: paymentResponse.paymentId,
+                  orderType: "ledFrame",
+                  frameSize: item.frameSize || "",
+                  customPhoto: item.customPhoto || "",
+                });
+              } else if (item.orderType === "featuredProduct") {
                 // featured order
                 await createFeaturedOrder({
                   featuredProductId: item.featuredProductId,

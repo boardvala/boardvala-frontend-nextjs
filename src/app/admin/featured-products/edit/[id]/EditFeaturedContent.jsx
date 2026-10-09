@@ -11,7 +11,6 @@ import {
 } from "../../../../../services/featuredProductService";
 import { getGalleryImage } from "../../../../../utils/imageUtils";
 
-
 export default function EditFeaturedProduct() {
   const router = useRouter();
   const { id } = useParams();
@@ -27,7 +26,9 @@ export default function EditFeaturedProduct() {
     waterproof: false,
     inStock: true,
     active: true,
+    isCustomizable: false,
   });
+  const [sizes, setSizes] = useState([]);
 
   const [images, setImages] = useState([]); // सध्याच्या images फक्त दाखवायला
   const [loading, setLoading] = useState(false);
@@ -50,8 +51,9 @@ export default function EditFeaturedProduct() {
           waterproof: !!product.waterproof,
           inStock: !!product.inStock,
           active: !!product.active,
+          isCustomizable: !!product.isCustomizable,
         });
-
+        setSizes(product.sizes || []);
         setImages(product.images || []);
       } catch (err) {
         console.log(err);
@@ -253,6 +255,8 @@ export default function EditFeaturedProduct() {
         waterproof: form.waterproof,
         inStock: form.inStock,
         active: form.active,
+        isCustomizable: form.isCustomizable,
+        sizes: sizes,
       });
       Swal.fire({
         toast: true,
@@ -277,9 +281,9 @@ export default function EditFeaturedProduct() {
 
   if (fetching) {
     return (
-        <div className="container py-5">
-          <h3>Loading...</h3>
-        </div>
+      <div className="container py-5">
+        <h3>Loading...</h3>
+      </div>
     );
   }
 
@@ -385,6 +389,96 @@ export default function EditFeaturedProduct() {
                     <label className="form-check-label">Waterproof</label>
                   </div>
                 </div>
+
+                {/* Customizable (LED Frame) */}
+                <div className="form-check mb-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="isCustomizable"
+                    checked={form.isCustomizable}
+                    onChange={(e) =>
+                      setForm({ ...form, isCustomizable: e.target.checked })
+                    }
+                  />
+                  <label className="form-check-label" htmlFor="isCustomizable">
+                    <strong>Customizable</strong> — Customer must upload photo
+                    (LED Frame)
+                  </label>
+                </div>
+
+                {/* Sizes — only if customizable */}
+                {form.isCustomizable && (
+                  <div className="card border-0 bg-light p-3 mb-3">
+                    <h6 className="fw-bold mb-3">
+                      <i className="bi bi-rulers me-2"></i>Frame Sizes & Pricing
+                    </h6>
+
+                    {sizes.map((s, i) => (
+                      <div
+                        key={i}
+                        className="d-flex gap-2 mb-2 align-items-center"
+                      >
+                        <input
+                          className="form-control form-control-sm"
+                          placeholder="Name (A4)"
+                          value={s.name || ""}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].name = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "100px" }}
+                        />
+                        <input
+                          className="form-control form-control-sm"
+                          placeholder="Dimensions (8×12 inch)"
+                          value={s.dimensions || ""}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].dimensions = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "160px" }}
+                        />
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          placeholder="Price (₹)"
+                          value={s.price || ""}
+                          onChange={(e) => {
+                            const updated = [...sizes];
+                            updated[i].price = e.target.value;
+                            setSizes(updated);
+                          }}
+                          style={{ maxWidth: "110px" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() =>
+                            setSizes(sizes.filter((_, idx) => idx !== i))
+                          }
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-dark mt-1"
+                      onClick={() =>
+                        setSizes([
+                          ...sizes,
+                          { name: "", dimensions: "", price: "" },
+                        ])
+                      }
+                    >
+                      <i className="bi bi-plus-lg me-1"></i>Add Size
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="mb-4">

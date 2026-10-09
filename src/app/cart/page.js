@@ -4,8 +4,8 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "../../styles/cart.css";
-import { getProductImage } from "../../utils/imageUtils"
-import { notifyCartChanged } from "../../utils/cartEvents"
+import { getProductImage } from "../../utils/imageUtils";
+import { notifyCartChanged } from "../../utils/cartEvents";
 import { SkeletonCartPage } from "../../components/Skeleton";
 
 import {
@@ -85,8 +85,8 @@ export default function Cart() {
   }
 
   if (loading) {
-  return <SkeletonCartPage />;
-}
+    return <SkeletonCartPage />;
+  }
 
   const productTotal = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -153,7 +153,7 @@ export default function Cart() {
                         ) : (
                           <img
                             src={getProductImage(item.product.previewImage)}
-                            className="rounded img-fluid"
+                            className="img-fluid"
                             style={{ maxHeight: "140px", objectFit: "cover" }}
                             alt=""
                           />
@@ -210,14 +210,32 @@ export default function Cart() {
                       <div className="col-lg-4 col-md-12 text-center mb-3 mb-lg-0">
                         <img
                           src={item.previewImage}
-                          alt=""
-                          className="rounded img-fluid"
+                          alt={item.name}
+                          className="img-fluid"
                           style={{ maxHeight: "140px", objectFit: "cover" }}
                         />
                       </div>
 
                       <div className="col-lg-4 col-md-12 mb-3 mb-lg-0">
-                        {item.orderType === "featuredProduct" ? (
+                        {item.orderType === "ledFrame" ? (
+                          <>
+                            <h5 className="fw-bold mb-1">{item.name}</h5>
+                            <p className="mb-1">
+                              <strong>Size:</strong> {item.frameSize}
+                            </p>
+                            <p
+                              className="mb-1 text-success"
+                              style={{ fontSize: "0.85rem" }}
+                            >
+                              <i className="bi bi-check-circle-fill me-1"></i>
+                              Custom photo included
+                            </p>
+                            <p className="text-success fw-bold mb-0">
+                              ₹ {item.price} × {item.quantity} = ₹{" "}
+                              {item.price * item.quantity}
+                            </p>
+                          </>
+                        ) : item.orderType === "featuredProduct" ? (
                           <>
                             <h5 className="fw-bold mb-1">{item.name}</h5>
                             <p className="text-success fw-bold mb-0">
@@ -295,12 +313,24 @@ export default function Cart() {
                     {customItems.map((item) => (
                       <div key={item.id} className="mb-3">
                         <div className="fw-semibold">
-                          {item.orderType === "featuredProduct"
+                          {item.orderType === "ledFrame"
                             ? item.name
-                            : "Custom Design"}
+                            : item.orderType === "featuredProduct"
+                              ? item.name
+                              : "Custom Design"}
                         </div>
 
-                        {item.orderType === "featuredProduct" ? (
+                        {item.orderType === "ledFrame" ? (
+                          <>
+                            <small className="text-muted d-block">
+                              LED Frame — {item.frameSize}
+                            </small>
+                            <small className="text-success d-block">
+                              <i className="bi bi-check-circle-fill me-1"></i>
+                              Custom photo
+                            </small>
+                          </>
+                        ) : item.orderType === "featuredProduct" ? (
                           <small className="text-muted d-block">
                             Featured Product
                           </small>

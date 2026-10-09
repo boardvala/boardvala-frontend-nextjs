@@ -3,17 +3,6 @@
 import { useEffect, useState } from "react";
 import { getSurveyStats } from "../../../services/surveyService";
 
-const SOURCE_ICONS = {
-  google: "🔍",
-  instagram: "📸",
-  youtube: "🎬",
-  facebook: "👥",
-  whatsapp: "💬",
-  friend: "🤝",
-  ad: "📢",
-  other: "🌐",
-};
-
 export default function SurveyContent() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,133 +38,62 @@ export default function SurveyContent() {
     );
   }
 
-  const responseRate =
-    data.impressions > 0
-      ? ((data.answers / data.impressions) * 100).toFixed(1)
-      : 0;
-
-  const maxCount =
-    data.sources?.length > 0
-      ? Math.max(...data.sources.map((s) => s.count))
-      : 1;
+  const pages = data.pages || [];
+  const maxPage = pages.length > 0 ? Math.max(...pages.map((p) => p.count)) : 1;
 
   return (
     <div className="container py-4 py-md-5">
       <h2 className="fw-bold mb-4">
-        <i className="bi bi-bar-chart me-2"></i>Survey Analytics
+        <i className="bi bi-bar-chart me-2"></i>Site Visit Analytics
       </h2>
 
-      {/* Stats Cards */}
+      {/* Total Impressions Card */}
       <div className="row g-3 mb-4">
-        <div className="col-6 col-md-3">
+        <div className="col-12 col-md-4">
           <div
-            className="card border-0 shadow-sm h-100"
-            style={{ borderLeft: "4px solid #2563eb" }}
+            className="card border-0 shadow-sm"
+            style={{ borderLeft: "4px solid #059669" }}
           >
-            <div className="card-body text-center">
+            <div className="card-body text-center py-4">
               <div
-                style={{ fontSize: "2rem", fontWeight: 800, color: "#2563eb" }}
+                style={{ fontSize: "2.5rem", fontWeight: 800, color: "#059669" }}
               >
                 {data.impressions}
               </div>
               <div
                 className="text-muted"
-                style={{ fontSize: "0.8rem", fontWeight: 600 }}
+                style={{ fontSize: "0.85rem", fontWeight: 600 }}
               >
-                👀 Impressions
+                👀 Total Impressions
               </div>
-              <small className="text-muted">Popup shown</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-6 col-md-3">
-          <div
-            className="card border-0 shadow-sm h-100"
-            style={{ borderLeft: "4px solid #16a34a" }}
-          >
-            <div className="card-body text-center">
-              <div
-                style={{ fontSize: "2rem", fontWeight: 800, color: "#16a34a" }}
-              >
-                {data.answers}
-              </div>
-              <div
-                className="text-muted"
-                style={{ fontSize: "0.8rem", fontWeight: 600 }}
-              >
-                ✅ Answers
-              </div>
-              <small className="text-muted">Source selected</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-6 col-md-3">
-          <div
-            className="card border-0 shadow-sm h-100"
-            style={{ borderLeft: "4px solid #d97706" }}
-          >
-            <div className="card-body text-center">
-              <div
-                style={{ fontSize: "2rem", fontWeight: 800, color: "#d97706" }}
-              >
-                {data.skips}
-              </div>
-              <div
-                className="text-muted"
-                style={{ fontSize: "0.8rem", fontWeight: 600 }}
-              >
-                ⏭️ Skipped
-              </div>
-              <small className="text-muted">Close / Maybe later</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-6 col-md-3">
-          <div
-            className="card border-0 shadow-sm h-100"
-            style={{ borderLeft: "4px solid #7c3aed" }}
-          >
-            <div className="card-body text-center">
-              <div
-                style={{ fontSize: "2rem", fontWeight: 800, color: "#7c3aed" }}
-              >
-                {responseRate}%
-              </div>
-              <div
-                className="text-muted"
-                style={{ fontSize: "0.8rem", fontWeight: 600 }}
-              >
-                📊 Response Rate
-              </div>
-              <small className="text-muted">Answers / Impressions</small>
+              <small className="text-muted">
+                Welcome toast shown to visitors
+              </small>
             </div>
           </div>
         </div>
       </div>
 
       <div className="row g-4">
-        {/* Sources Breakdown */}
+        {/* Page-wise Impressions (from backend aggregation) */}
         <div className="col-lg-7">
           <div className="card border-0 shadow-sm">
             <div className="card-body p-4">
-              <h5 className="fw-bold mb-4">
-                📊 How Users Found BoardVala
-              </h5>
+              <h5 className="fw-bold mb-4">📄 Page-wise Impressions</h5>
 
-              {data.sources?.length > 0 ? (
+              {pages.length > 0 ? (
                 <div className="d-flex flex-column gap-3">
-                  {data.sources.map((source) => (
-                    <div key={source._id}>
+                  {pages.map((item) => (
+                    <div key={item._id}>
                       <div className="d-flex justify-content-between align-items-center mb-1">
-                        <span className="fw-semibold" style={{ fontSize: "0.9rem" }}>
-                          {SOURCE_ICONS[source._id] || "🌐"}{" "}
-                          {source._id.charAt(0).toUpperCase() + source._id.slice(1)}
+                        <span
+                          className="fw-semibold"
+                          style={{ fontSize: "0.9rem" }}
+                        >
+                          {item._id || "/"}
                         </span>
-                        <span className="fw-bold" style={{ color: "#1b263b" }}>
-                          {source.count}
+                        <span className="fw-bold" style={{ color: "#065f46" }}>
+                          {item.count}
                         </span>
                       </div>
                       <div
@@ -189,8 +107,9 @@ export default function SurveyContent() {
                         <div
                           style={{
                             height: "100%",
-                            width: `${(source.count / maxCount) * 100}%`,
-                            background: "linear-gradient(90deg, #2563eb, #7c3aed)",
+                            width: `${(item.count / maxPage) * 100}%`,
+                            background:
+                              "linear-gradient(90deg, #059669, #10b981)",
                             borderRadius: "10px",
                             transition: "width 0.5s ease",
                           }}
@@ -201,18 +120,18 @@ export default function SurveyContent() {
                 </div>
               ) : (
                 <div className="text-center py-4 text-muted">
-                  No responses yet.
+                  No impressions yet.
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Recent Responses */}
+        {/* Recent Impressions */}
         <div className="col-lg-5">
           <div className="card border-0 shadow-sm">
             <div className="card-body p-4">
-              <h5 className="fw-bold mb-4">🕐 Recent Responses</h5>
+              <h5 className="fw-bold mb-4">🕐 Recent Impressions</h5>
 
               {data.recent?.length > 0 ? (
                 <div className="d-flex flex-column gap-2">
@@ -225,15 +144,16 @@ export default function SurveyContent() {
                         fontSize: "0.85rem",
                       }}
                     >
-                      <div>
-                        <span className="me-2">
-                          {SOURCE_ICONS[item.source] || "🌐"}
-                        </span>
-                        <span className="fw-semibold">
-                          {item.source.charAt(0).toUpperCase() + item.source.slice(1)}
-                        </span>
-                      </div>
-                      <span className="text-muted" style={{ fontSize: "0.75rem" }}>
+                      <span
+                        className="fw-semibold text-truncate"
+                        style={{ maxWidth: "60%" }}
+                      >
+                        📄 {item.page || "/"}
+                      </span>
+                      <span
+                        className="text-muted"
+                        style={{ fontSize: "0.75rem" }}
+                      >
                         {new Date(item.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -246,7 +166,7 @@ export default function SurveyContent() {
                 </div>
               ) : (
                 <div className="text-center py-4 text-muted">
-                  No responses yet.
+                  No impressions yet.
                 </div>
               )}
             </div>

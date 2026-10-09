@@ -38,12 +38,24 @@ export async function getMyFeaturedOrderById(id) {
 }
 
 //order tracking
-export async function getFeaturedOrderTracking(id) {
-  const res = await api.get(`/featured-orders/${id}/tracking`);
+// export async function getFeaturedOrderTracking(id) {
+//   const res = await api.get(`/featured-orders/${id}/tracking`);
+//   return res.data;
+// }
+
+// export async function getAdminFeaturedOrderTracking(id) {
+//   const res = await api.get(`/featured-orders/${id}/admin-tracking`);
+//   return res.data;
+// }
+
+// Admin — update envia shipping
+export async function updateFeaturedOrderShipping(id, data) {
+  const res = await api.put(`/featured-orders/${id}/shipping`, data);
   return res.data;
 }
 
-export async function getAdminFeaturedOrderTracking(id) {
-  const res = await api.get(`/featured-orders/${id}/admin-tracking`);
+// Track shipment (Envia)
+export async function trackFeaturedOrder(id) {
+  const res = await api.get(`/featured-orders/${id}/track`);
   return res.data;
 }

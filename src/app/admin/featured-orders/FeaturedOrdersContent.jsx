@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllFeaturedOrders } from "../../../services/featuredOrderService";
 
-
 export default function AdminFeaturedOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,16 +62,50 @@ export default function AdminFeaturedOrders() {
                 orders.map((order) => (
                   <tr key={order._id}>
                     <td>
-                      <img
-                        src={order.previewImage}
-                        alt="Product"
-                        width="70"
-                        height="50"
-                        style={{ objectFit: "cover", borderRadius: "6px" }}
-                      />
+                      <div style={{ position: "relative" }}>
+                        <img
+                          src={
+                            order.orderType === "ledFrame" &&
+                            order.customerPhoto
+                              ? order.customerPhoto
+                              : order.previewImage
+                          }
+                          alt="Product"
+                          width="70"
+                          height="50"
+                          style={{ objectFit: "cover", borderRadius: "6px" }}
+                        />
+                        {order.orderType === "ledFrame" && (
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "-6px",
+                              right: "-6px",
+                              background: "#2563eb",
+                              color: "#fff",
+                              fontSize: "0.55rem",
+                              padding: "1px 5px",
+                              borderRadius: "6px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            LED
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td>#{order._id.slice(-6).toUpperCase()}</td>
-                    <td>{order.title}</td>
+                    <td>
+                      {order.title}
+                      {order.orderType === "ledFrame" && order.frameSize && (
+                        <small
+                          className="d-block text-primary"
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          📐 {order.frameSize}
+                        </small>
+                      )}
+                    </td>
                     <td>{order.customerName}</td>
                     <td>{order.customerPhone}</td>
                     <td>{order.quantity}</td>
