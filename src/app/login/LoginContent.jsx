@@ -16,6 +16,7 @@ import {
   FaTruck,
   FaCheckCircle,
   FaEnvelope,
+  FaHome,
 } from "react-icons/fa";
 
 export default function Login() {
@@ -183,6 +184,12 @@ export default function Login() {
               className="ms-2 text-decoration-none fw-semibold"
             >
               Register
+            </Link>
+          </div>
+
+          <div className="text-center mt-2">
+            <Link href="/" className="text-decoration-none text-muted">
+              <FaHome className="me-1" /> Go to Home
             </Link>
           </div>
 

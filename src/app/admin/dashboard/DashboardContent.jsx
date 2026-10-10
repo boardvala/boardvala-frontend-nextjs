@@ -72,6 +72,12 @@ const CARDS = [
     to: "/admin/survey",
     icon: "📊",
   },
+  {
+    title: "Projects",
+    desc: "Manage completed project catalogue.",
+    to: "/admin/projects",
+    icon: "🏗️",
+  },
 ];
 
 export default function AdminDashboard() {

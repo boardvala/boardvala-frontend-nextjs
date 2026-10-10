@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { getFeaturedProjects } from "../../services/projectService";
 import { getGalleryImage } from "../../utils/imageUtils";
-import "../../styles/completedProject.css"
+import "../../styles/completedProject.css";
 
 export default function CompletedProjects() {
   const [projects, setProjects] = useState([]);
+  const trackRef = useRef(null);
+  const autoRef = useRef(null);
+  const dragState = useRef({ down: false, startX: 0, scrollLeft: 0 });
 
   useEffect(() => {
     async function load() {
@@ -21,10 +24,76 @@ export default function CompletedProjects() {
     load();
   }, []);
 
-  if (projects.length === 0) return null; // projects नसतील तर section लपवा
+  /* ── auto slide ── */
+  const startAuto = useCallback(() => {
+    stopAuto();
+    autoRef.current = setInterval(() => {
+      const el = trackRef.current;
+      if (!el) return;
+      // smooth scroll by 1px every 20ms = ~50px/sec
+      el.scrollLeft += 1;
+      // loop back when reached end
+      if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+        el.scrollLeft = 0;
+      }
+    }, 20);
+  }, []);
 
-  // seamless marquee loop
-  const loop = [...projects, ...projects];
+  const stopAuto = useCallback(() => {
+    if (autoRef.current) {
+      clearInterval(autoRef.current);
+      autoRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (projects.length > 0) startAuto();
+    return () => stopAuto();
+  }, [projects, startAuto, stopAuto]);
+
+  /* ── mouse drag ── */
+  function onMouseDown(e) {
+    dragState.current = { down: true, startX: e.pageX, scrollLeft: trackRef.current.scrollLeft };
+    trackRef.current.style.cursor = "grabbing";
+    stopAuto();
+  }
+  function onMouseMove(e) {
+    if (!dragState.current.down) return;
+    e.preventDefault();
+    const walk = (e.pageX - dragState.current.startX) * 1.5;
+    trackRef.current.scrollLeft = dragState.current.scrollLeft - walk;
+  }
+  function onMouseUp() {
+    dragState.current.down = false;
+    if (trackRef.current) trackRef.current.style.cursor = "grab";
+    startAuto();
+  }
+
+  /* ── touch swipe ── */
+  function onTouchStart(e) {
+    dragState.current = { down: true, startX: e.touches[0].pageX, scrollLeft: trackRef.current.scrollLeft };
+    stopAuto();
+  }
+  function onTouchMove(e) {
+    if (!dragState.current.down) return;
+    const walk = (e.touches[0].pageX - dragState.current.startX) * 1.5;
+    trackRef.current.scrollLeft = dragState.current.scrollLeft - walk;
+  }
+  function onTouchEnd() {
+    dragState.current.down = false;
+    startAuto();
+  }
+
+  /* ── arrow buttons ── */
+  function scrollBy(dir) {
+    const el = trackRef.current;
+    if (!el) return;
+    stopAuto();
+    el.scrollBy({ left: dir * 320, behavior: "smooth" });
+    setTimeout(startAuto, 2000);
+  }
+
+  if (projects.length === 0) return null;
 
   return (
     <section className="py-5">
@@ -37,9 +106,28 @@ export default function CompletedProjects() {
         </div>
       </div>
 
-      <div className="cp-marquee">
-        <div className="cp-track">
-          {loop.map((project, index) => {
+      <div
+        className="cp-slider"
+        onMouseEnter={stopAuto}
+        onMouseLeave={startAuto}
+      >
+        {/* Left Arrow */}
+        <button className="cp-arrow cp-arrow--left" onClick={() => scrollBy(-1)} aria-label="Previous">
+          <i className="bi bi-chevron-left"></i>
+        </button>
+
+        <div
+          className="cp-track"
+          ref={trackRef}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {projects.map((project) => {
             const cover =
               project.coverImage?.url ||
               (project.images?.length > 0
@@ -50,15 +138,12 @@ export default function CompletedProjects() {
               <Link
                 href={`/projects/${project._id}`}
                 className="cp-card"
-                key={`${project._id}-${index}`}
+                key={project._id}
+                draggable={false}
               >
                 <div className="cp-card__imgwrap">
                   {cover ? (
-                    <img
-                      src={cover}
-                      alt={project.title}
-                      className="cp-card__img"
-                    />
+                    <img src={cover} alt={project.title} className="cp-card__img" draggable={false} />
                   ) : (
                     <div
                       className="cp-card__img d-flex align-items-center justify-content-center"
@@ -89,6 +174,11 @@ export default function CompletedProjects() {
             );
           })}
         </div>
+
+        {/* Right Arrow */}
+        <button className="cp-arrow cp-arrow--right" onClick={() => scrollBy(1)} aria-label="Next">
+          <i className="bi bi-chevron-right"></i>
+        </button>
       </div>
     </section>
   );
