@@ -5,7 +5,7 @@ import "../../styles/product-card.css";
 export default function ProductCard({ product }) {
   // link — type नुसार वेगळा पेज
   let to = `/products/${product.id}`;
-  if (product.type === "gallery") to = `/designs/${product.id}`;
+  if (product.type === "gallery") to = `/designs/${product.slug || product.id}`;
   if (product.type === "featured") to = `/featured-products/${product.slug || product.id}`;
 
   // image — type नुसार योग्य helper

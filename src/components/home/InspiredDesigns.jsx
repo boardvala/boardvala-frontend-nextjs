@@ -23,6 +23,7 @@ export default function InspiredDesigns() {
       // फक्त inspiration gallery (products इथे नको — ते वेगळे)
       const galleryItems = (gallery || []).map((design) => ({
         id: design._id,
+        slug: design.slug,
         type: "gallery",
         name: design.title,
         price: design.price,

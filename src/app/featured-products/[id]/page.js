@@ -57,6 +57,7 @@ async function getSimilarProducts(currentId) {
         id: p._id,
         type: "featured",
         name: p.title,
+        slug: p.slug,
         price: p.price,
         previewImage: p.images?.length > 0 ? p.images[0] : null,
       }));

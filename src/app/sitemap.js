@@ -47,7 +47,7 @@ export default async function sitemap() {
     const res = await fetch(`${API}/gallery`, { cache: "no-store" });
     const designs = await res.json();
     galleryPages = (designs || []).map((d) => ({
-      url: `https://www.boardvala.com/designs/${d._id}`,
+      url: `https://www.boardvala.com/designs/${d.slug || d._id}`,
       lastModified: d.updatedAt || d.createdAt,
       changeFrequency: "weekly",
       priority: 0.7,
