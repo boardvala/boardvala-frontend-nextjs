@@ -64,7 +64,7 @@ export default async function sitemap() {
     });
     const products = await res.json();
     featuredPages = (products || []).map((p) => ({
-      url: `https://www.boardvala.com/featured-products/${p._id}`,
+      url: `https://www.boardvala.com/featured-products/${p.slug || p._id}`,
       lastModified: p.updatedAt || p.createdAt,
       changeFrequency: "weekly",
       priority: 0.7,

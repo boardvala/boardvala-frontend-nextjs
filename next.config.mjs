@@ -3,6 +3,21 @@ const nextConfig = {
   /* config options here */
   reactCompiler: true,
   devIndicators: false,
+
+  async redirects() {
+    return [
+      {
+        source: "/index.php/product/:slug",
+        destination: "/featured-products/:slug",
+        permanent: true,
+      },
+      {
+        source: "/index.php/:path*",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
