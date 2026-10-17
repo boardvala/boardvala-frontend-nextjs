@@ -1,5 +1,5 @@
 
-const PHONE_NUMBER = "+918329860034"; // ← तुमचा नंबर टाका
+const PHONE_NUMBER = "+917744994592"; // ← तुमचा नंबर टाका
 const PREFILLED_MESSAGE = "Hi! I have a question about BoardVala."; // user ला आधीच भरलेला मजकूर
 
 export default function WhatsAppButton() {

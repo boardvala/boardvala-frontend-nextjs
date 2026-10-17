@@ -56,7 +56,7 @@ export default function Footer() {
               </li>
               <li>
                 <i className="bi bi-telephone me-2"></i>
-                <a href="tel:+919975374552">+91 9975374552</a>
+                <a href="tel:+919975374552">+91 7744994592</a>
               </li>
               <li>
                 <i className="bi bi-geo-alt me-2"></i>
@@ -91,7 +91,7 @@ export default function Footer() {
                 <i className="bi bi-youtube"></i>
               </a>
               <a
-                href="https://wa.me/918329860034"
+                href="https://wa.me/917744994592"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

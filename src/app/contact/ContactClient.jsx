@@ -33,7 +33,7 @@ export default function Contact() {
                 <p className="mb-3">
                   <strong>📞 Phone</strong>
                   <br />
-                  +91 9172914161
+                  +91 7744994592
                 </p>
 
                 <p className="mb-3">
