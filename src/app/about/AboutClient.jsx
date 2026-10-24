@@ -76,7 +76,7 @@ export default function About() {
               <p className="mb-2">
                 <strong>📞 Phone:</strong>
                 <br />
-                +91 7744994592
+                +91 8788736288
               </p>
 
               <p className="mb-2">

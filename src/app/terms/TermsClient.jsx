@@ -115,12 +115,7 @@ export default function TermsCondition() {
             <p>
               Since every product is manufactured specifically for each
               customer, customized products are not eligible for return or
-              exchange due to change of mind.
-            </p>
-
-            <p>
-              Damaged or defective products will be handled according to our
-              Return & Cancellation Policy.
+              exchange.
             </p>
 
             <hr className="my-4" />
@@ -176,7 +171,7 @@ export default function TermsCondition() {
 
             <p className="mb-2">Amravati, Maharashtra, India</p>
 
-            <p className="mb-2">Phone: +91 77449 94592</p>
+            <p className="mb-2">Phone: +91 8788736288</p>
 
             <p className="mb-0">Email: support@boardvala.com</p>
           </div>
