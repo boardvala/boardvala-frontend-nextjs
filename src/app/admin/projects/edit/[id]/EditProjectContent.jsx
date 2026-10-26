@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 
 const CATEGORIES = [
   "Hospital", "Mall", "Shop", "Office", "School",
-  "Hotel", "Restaurant", "Residential", "Other",
+  "Hotel", "Restaurant", "Residential", "Commercial",
 ];
 
 export default function EditProjectContent() {

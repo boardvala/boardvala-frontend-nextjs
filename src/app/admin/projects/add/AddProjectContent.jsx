@@ -121,7 +121,7 @@ export default function AddProjectContent() {
                     <option value="Hotel">Hotel</option>
                     <option value="Restaurant">Restaurant</option>
                     <option value="Residential">Residential</option>
-                    <option value="Other">Other</option>
+                    <option value="Other">Commercial</option>
                   </select>
                 </div>
 
