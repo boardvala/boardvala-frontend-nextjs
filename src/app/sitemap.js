@@ -88,5 +88,20 @@ export default async function sitemap() {
     console.log("Sitemap: blogs fetch failed");
   }
 
-  return [...staticPages, ...galleryPages, ...featuredPages, ...blogPages];
+    // Dynamic — Projects
+  let projectPages = [];
+  try {
+    const res = await fetch(`${API}/projects`, { cache: "no-store" });
+    const projects = await res.json();
+    projectPages = (projects || []).map((p) => ({
+      url: `https://www.boardvala.com/projects/${p.slug || p._id}`,
+      lastModified: p.updatedAt || p.createdAt,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    }));
+  } catch {
+    console.log("Sitemap: projects fetch failed");
+  }
+
+  return [...staticPages, ...galleryPages, ...featuredPages, ...blogPages, ...projectPages];
 }

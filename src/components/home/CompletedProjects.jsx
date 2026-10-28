@@ -136,7 +136,7 @@ export default function CompletedProjects() {
 
             return (
               <Link
-                href={`/projects/${project._id}`}
+                href={`/projects/${project.slug || project._id}`}
                 className="cp-card"
                 key={project._id}
                 draggable={false}
