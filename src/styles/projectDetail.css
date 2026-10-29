@@ -54,3 +54,7 @@
     columns: 4;
   }
 }
+
+@keyframes lbSpin {
+  to { transform: rotate(360deg); }
+}
