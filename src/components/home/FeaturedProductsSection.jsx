@@ -48,9 +48,9 @@ export default function FeaturedProductsSection() {
     <section className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold mb-1">Featured Products</h2>
-          <p className="text-muted mb-0">
-            Ready-to-order products, crafted and finished by BoardVala.
+          <h2 className="fw-bold mb-1" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Featured Products</h2>
+          <p className="text-muted mb-0" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontSize: "0.9rem" }}>
+            Ready-to-order products, crafted and finished with precision.
           </p>
         </div>
 

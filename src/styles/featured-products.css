@@ -1,9 +1,10 @@
-/* ===== Featured Products (user) ===== */
+/* ===== Featured Products ===== */
 .fp-wrap {
   background: #f6f7f9;
   min-height: 80vh;
 }
 .fp-head-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-weight: 700;
   color: #1b263b;
 }
@@ -12,7 +13,7 @@
 .fp-card {
   background: #fff;
   border: 1px solid #e9ecef;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -40,6 +41,7 @@
   flex-grow: 1;
 }
 .fp-card-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-weight: 600;
   color: #1b263b;
   font-size: 0.98rem;
@@ -51,12 +53,14 @@
   overflow: hidden;
 }
 .fp-card-cat {
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-size: 0.75rem;
   color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 .fp-card-price {
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: #0f172a;
@@ -72,4 +76,20 @@
   text-align: center;
   padding: 60px 20px;
   color: #64748b;
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+  .fp-card-body {
+    padding: 8px;
+  }
+  .fp-card-title {
+    font-size: 0.72rem;
+  }
+  .fp-card-cat {
+    font-size: 0.6rem;
+  }
+  .fp-card-img {
+    aspect-ratio: 1 / 1;
+  }
 }

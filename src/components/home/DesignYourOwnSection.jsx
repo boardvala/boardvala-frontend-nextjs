@@ -21,9 +21,7 @@ export default function DesignYourOwnSection() {
         .dyo-img {
           width: 100%;
           max-height: 440px;
-          object-fit: cover;
-          border-radius: 18px;
-          box-shadow: 0 20px 45px rgba(15,23,42,.18);
+          object-fit: cover; 
         }
         .dyo-cta {
           display: inline-block;

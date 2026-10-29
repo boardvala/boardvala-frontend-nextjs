@@ -29,9 +29,9 @@ export default async function FeaturedProducts() {
     <div className="fp-wrap py-4 py-md-5">
       <div className="container">
         <div className="mb-4">
-          <h2 className="fp-head-title mb-1">Featured Products</h2>
-          <p className="text-muted mb-0">
-            Ready-to-order products, crafted and finished by BoardVala.
+          <h2 className="fp-head-title mb-1" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Featured Products</h2>
+          <p className="text-muted mb-0" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontSize: "0.9rem" }}>
+            Ready-to-order, crafted and finished with precision.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default async function FeaturedProducts() {
         ) : (
           <div className="row g-3 g-md-4">
             {products.map((product) => (
-              <div className="col-6 col-md-4 col-lg-3" key={product._id}>
+              <div className="col-4 col-md-4 col-lg-3" key={product._id}>
                 <Link
                   href={`/featured-products/${product.slug || product._id}`}
                   className="fp-card"
@@ -56,7 +56,11 @@ export default async function FeaturedProducts() {
                       <span className="fp-card-cat">{product.category}</span>
                     )}
 
-                    <h3 className="fp-card-title">{product.title}</h3>
+                    <h3 className="fp-card-title">
+                      {product.title?.split(" ").length > 4
+                        ? product.title.split(" ").slice(0, 4).join(" ") + "…"
+                        : product.title}
+                    </h3>
 
                     {!product.inStock && (
                       <span className="fp-out">Out of stock</span>
