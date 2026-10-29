@@ -5,10 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getProject } from "../../../services/projectService";
 import { getGalleryImage } from "../../../utils/imageUtils";
+import Image from "next/image";
 
 const ADMIN_WHATSAPP = "918788736288";
 
-export default function ProjectDetailClient() {
+export default function ProjectDetailClient({ initialProject }) {
   const { id } = useParams();
   const router = useRouter();
   const [project, setProject] = useState(null);
@@ -16,6 +17,7 @@ export default function ProjectDetailClient() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
+    if (initialProject) return; // server वरून आलं तर skip
     async function load() {
       try {
         const data = await getProject(id);
@@ -27,7 +29,7 @@ export default function ProjectDetailClient() {
       }
     }
     load();
-  }, [id]);
+  }, [id, initialProject]);
 
   function handleEnquiry(imageUrl) {
     const message =
@@ -146,10 +148,13 @@ export default function ProjectDetailClient() {
                     }}
                   >
                     {/* Image — click to open lightbox */}
-                    <img
+                    <Image
                       src={imageUrl}
                       alt={`${project.title} ${i + 1}`}
                       onClick={() => setSelectedImage(imageUrl)}
+                      width={300}
+                      height={300}
+                      sizes="(max-width: 768px) 50vw, 25vw"
                       style={{
                         width: "100%",
                         aspectRatio: "1",

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { getFeaturedProjects } from "../../services/projectService";
 import { getGalleryImage } from "../../utils/imageUtils";
+import Image from "next/image";
 import "../../styles/completedProject.css";
 
 export default function CompletedProjects() {
@@ -143,7 +144,7 @@ export default function CompletedProjects() {
               >
                 <div className="cp-card__imgwrap">
                   {cover ? (
-                    <img src={cover} alt={project.title} className="cp-card__img" draggable={false} />
+                    <Image src={cover} alt={project.title} className="cp-card__img" draggable={false} width={320} height={220} sizes="280px" />
                   ) : (
                     <div
                       className="cp-card__img d-flex align-items-center justify-content-center"
