@@ -18,6 +18,13 @@ export default function ProductCard({ product }) {
     imageSrc = getProductImage(product.previewImage);
   }
 
+  // title truncate function — component च्या वर ठेवा
+function shortTitle(name, wordLimit = 4) {
+  const words = (name || "").split(" ");
+  if (words.length <= wordLimit) return name;
+  return words.slice(0, wordLimit).join(" ") + "…";
+}
+
   return (
     <div className="product-grid-item mb-4">
       <Link href={to} className="product-card-link">
@@ -29,7 +36,7 @@ export default function ProductCard({ product }) {
           />
 
           <div className="p-3">
-            <h6 className="mb-2">{product.name}</h6>
+            <h6 className="mb-2">{shortTitle(product.name)}</h6>
 
             {product.type === "gallery" ? (
               <>

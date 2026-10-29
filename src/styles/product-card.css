@@ -1,11 +1,14 @@
+/* ===== product-card.css ===== */
+
 .product-grid-item {
-    width: 50%;
-    padding: 0 10px;
+    width: 33.3333%;
+    padding: 0 6px;
 }
 
 @media (min-width: 768px) {
     .product-grid-item {
         width: 33.3333%;
+        padding: 0 10px;
     }
 }
 
@@ -21,50 +24,69 @@
     }
 }
 
-.product-grid-item {
-    width: 50%;
-    padding: 0 10px;
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-@media (min-width:768px){
-    .product-grid-item{
-        width:33.3333%;
+.product-card {
+    background: #f7f3f3;
+    border: none;
+    
+    overflow: hidden;
+    transition: all .25s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+}
+
+.product-card-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.product-card h6 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.product-card .btn-sm {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+}
+
+.product-price {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 575.98px) {
+    .product-grid-item {
+        padding: 0 4px;
+        margin-bottom: 8px !important;
     }
-}
-
-@media (min-width:1200px){
-    .product-grid-item{
-        width:20%;
+    .product-card-image {
+        height: 130px;
     }
-}
-
-.product-card-link{
-    text-decoration:none;
-    color:inherit;
-    display:block;
-}
-
-.product-card{
-    background:#f7f3f3;
-    border:none;
-    border-radius:12px;
-    overflow:hidden;
-    transition:all .25s ease;
-    cursor:pointer;
-}
-
-.product-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.product-card-image{
-    width:100%;
-    height:220px;
-    object-fit:cover;
-}
-
-.product-price{
-    font-weight:600;
-    color:#000;
+    .product-card .p-3 {
+        padding: 8px !important;
+    }
+    .product-card h6 {
+        font-size: 0.72rem;
+    }
+    .product-card .btn-sm {
+        font-size: 0.62rem;
+        padding: 3px 8px;
+    }
 }

@@ -47,8 +47,8 @@ export default function InspiredDesigns() {
     <section className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold mb-1">Design Inspiration</h2>
-          <p className="text-muted mb-0">
+          <h2 className="fw-bold mb-1" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Design Inspiration</h2>
+          <p className="text-muted mb-0" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontSize: "0.9rem" }}>
             Get inspired — then upload your own to make it yours.
           </p>
         </div>
