@@ -91,8 +91,9 @@ export default async function sitemap() {
     // Dynamic — Projects
   let projectPages = [];
   try {
-    const res = await fetch(`${API}/projects`, { cache: "no-store" });
-    const projects = await res.json();
+    const res = await fetch(`${API}/projects/featured`, { cache: "no-store" });
+    const data = await res.json();
+    const projects = data.projects || [];
     projectPages = (projects || []).map((p) => ({
       url: `https://www.boardvala.com/projects/${p.slug || p._id}`,
       lastModified: p.updatedAt || p.createdAt,
