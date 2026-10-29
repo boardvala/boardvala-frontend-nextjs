@@ -170,13 +170,80 @@
     );
   }
 }
+
 @media (max-width: 576px) {
   .bv-hero__stage {
-    min-height: 420px;
+    min-height: 300px;
   }
+
+  .bv-hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.2) 0%,
+      rgba(15, 23, 42, 0.75) 60%,
+      rgba(15, 23, 42, 0.9) 100%
+    );
+  }
+
+  .bv-hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 300px;
+    padding-bottom: 50px;
+  }
+
+  .bv-hero__text {
+    max-width: 100%;
+  }
+
+  .bv-hero__eyebrow {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .bv-hero__title {
+    font-size: 1.4rem;
+    margin: 8px 0 8px;
+    line-height: 1.2;
+  }
+
   .bv-hero__lead {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+    max-width: 100%;
   }
+
+  .bv-hero__cta-primary {
+    padding: 10px 20px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+  }
+
+  .bv-hero__cta-secondary {
+    padding: 10px 18px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+  }
+
+  .bv-hero__dots {
+    bottom: 12px;
+  }
+
+  .bv-hero__dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .bv-hero__dot.active {
+    width: 20px;
+  }
+
+ .bv-hero__slide {
+  background-size: 115%;
+  background-position: center top;
+}
 }
 
 
