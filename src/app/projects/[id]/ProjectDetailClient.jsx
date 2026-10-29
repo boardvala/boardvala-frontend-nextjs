@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getProject } from "../../../services/projectService";
 import { getGalleryImage } from "../../../utils/imageUtils";
 import Image from "next/image";
+import "../../../styles/projectDetail.css";
 
 const ADMIN_WHATSAPP = "918788736288";
 
@@ -44,8 +45,17 @@ export default function ProjectDetailClient({ initialProject }) {
 
   if (loading) {
     return (
-      <div className="container py-5 text-center">
-        <div className="spinner-border"></div>
+      <div style={{ background: "#f6f7f9", minHeight: "70vh" }}>
+        <div className="container py-4 py-md-5">
+          <div style={{ width: "80px", height: "32px", background: "#e0e0e0", borderRadius: "6px", marginBottom: "12px", animation: "pulse 1.5s infinite" }} />
+          <div style={{ width: "60%", height: "28px", background: "#e0e0e0", borderRadius: "6px", marginBottom: "16px", animation: "pulse 1.5s infinite" }} />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "12px" }}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{ aspectRatio: "1", background: "#e0e0e0", borderRadius: "12px", animation: "pulse 1.5s infinite", animationDelay: `${i * 0.1}s` }} />
+            ))}
+          </div>
+        </div>
+        <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
       </div>
     );
   }
@@ -124,47 +134,25 @@ export default function ProjectDetailClient({ initialProject }) {
           )}
 
           {/* Image Grid */}
-          <div className="row g-3">
+          <div className="project-gallery">
             {(project.images || []).map((img, i) => {
               const imageUrl = getGalleryImage(img);
               return (
-                <div className="col-6 col-md-4 col-lg-3" key={i}>
-                  <div
+                <div className="project-gallery__item" key={i}>
+                  <Image
+                    src={imageUrl}
+                    alt={`${project.title} ${i + 1}`}
+                    onClick={() => setSelectedImage(imageUrl)}
+                    width={600}
+                    height={400}
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     style={{
-                      borderRadius: "12px",
-                      overflow: "hidden",
-                      border: "1px solid #ecedef",
-                      transition: "transform 0.2s, box-shadow 0.2s",
-                      background: "#fff",
+                      width: "100%",
+                      height: "auto",
+                      display: "block",
+                      cursor: "pointer",
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-3px)";
-                      e.currentTarget.style.boxShadow =
-                        "0 10px 24px rgba(0,0,0,0.12)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  >
-                    {/* Image — click to open lightbox */}
-                    <Image
-                      src={imageUrl}
-                      alt={`${project.title} ${i + 1}`}
-                      onClick={() => setSelectedImage(imageUrl)}
-                      width={300}
-                      height={300}
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      style={{
-                        width: "100%",
-                        aspectRatio: "1",
-                        objectFit: "cover",
-                        display: "block",
-                        cursor: "pointer",
-                      }}
-                    />
-
-                  </div>
+                  />
                 </div>
               );
             })}
