@@ -185,7 +185,6 @@ export default function ProjectDetailClient({ initialProject }) {
               maxWidth: "90vw",
               maxHeight: "75vh",
               objectFit: "contain",
-              borderRadius: "8px",
               cursor: "default",
             }}
           />
