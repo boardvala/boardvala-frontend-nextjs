@@ -2,8 +2,9 @@ import ProjectDetailClient from "./ProjectDetailClient";
 
 export async function generateMetadata({ params }) {
   try {
+    const { id } = await params;
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/projects/${params.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`,
       { cache: "no-store" }
     );
     const data = await res.json();
@@ -21,8 +22,9 @@ export async function generateMetadata({ params }) {
 export default async function ProjectPage({ params }) {
   let project = null;
   try {
+    const { id } = await params;
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/projects/${params.id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`,
       { cache: "no-store" }
     );
     const data = await res.json();

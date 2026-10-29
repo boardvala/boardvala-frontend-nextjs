@@ -12,8 +12,8 @@ const ADMIN_WHATSAPP = "918788736288";
 export default function ProjectDetailClient({ initialProject }) {
   const { id } = useParams();
   const router = useRouter();
-  const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [project, setProject] = useState(initialProject || null);  // server चा data direct set
+  const [loading, setLoading] = useState(!initialProject);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
