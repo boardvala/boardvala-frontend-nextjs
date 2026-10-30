@@ -38,12 +38,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-  const handleScroll = () => {
-    setScrolled(window.scrollY > 50);
-  };
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function handleLogout() {
     logout();
@@ -130,28 +130,31 @@ export default function Navbar() {
           <Link href="/blog" className="bv-sidebar-link" onClick={() => setSideOpen(false)}>Blog</Link>
           <Link href="/products" className="bv-sidebar-link" onClick={() => setSideOpen(false)}>Designs</Link>
           <Link href="/featured-products" className="bv-sidebar-link" onClick={() => setSideOpen(false)}>Featured Products</Link>
+
+          {/* Login — last link च्या लगेच खाली */}
+          <div className="bv-sidebar-footer">
+            {!user ? (
+              <Link href="/login" className="bv-sidebar-btn" onClick={() => setSideOpen(false)}>
+                <FiUser /> Login / Sign Up
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href={user.role === "admin" ? "/admin/dashboard" : "/account"}
+                  className="bv-sidebar-btn"
+                  onClick={() => setSideOpen(false)}
+                >
+                  <FiUser /> {user.role === "admin" ? "Admin Dashboard" : "My Account"}
+                </Link>
+                <button className="bv-sidebar-btn logout" onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        <div className="bv-sidebar-footer">
-          {!user ? (
-            <Link href="/login" className="bv-sidebar-btn" onClick={() => setSideOpen(false)}>
-              <FiUser /> Login / Sign Up
-            </Link>
-          ) : (
-            <>
-              <Link
-                href={user.role === "admin" ? "/admin/dashboard" : "/account"}
-                className="bv-sidebar-btn"
-                onClick={() => setSideOpen(false)}
-              >
-                <FiUser /> {user.role === "admin" ? "Admin Dashboard" : "My Account"}
-              </Link>
-              <button className="bv-sidebar-btn logout" onClick={handleLogout}>
-                Logout
-              </button>
-            </>
-          )}
-        </div>
+
       </div>
     </>
   );

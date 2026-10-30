@@ -175,10 +175,9 @@
   padding-left: 28px;
 }
 
-/* ===== SIDEBAR FOOTER ===== */
 .bv-sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 20px;
+  margin-top: 4px;
 }
 
 .bv-sidebar-btn {
@@ -187,31 +186,32 @@
   gap: 10px;
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(37, 99, 235, 0.12);
   color: #e2e8f0;
   text-decoration: none;
   font-family: 'Georgia', 'Times New Roman', serif;
   font-size: 0.9rem;
-  font-weight: 500;
-  border: none;
+  font-weight: 600;
+  border: 1px solid rgba(37, 99, 235, 0.3);
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   margin-bottom: 8px;
 }
 .bv-sidebar-btn:hover {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
+  background: #1b263b;
+  color: #ffffff;
+  border-color: #2563eb;
 }
 .bv-sidebar-btn.logout {
-  background: rgba(220, 38, 38, 0.2);
+  background: rgba(220, 38, 38, 0.15);
   color: #fca5a5;
+  border-color: rgba(220, 38, 38, 0.25);
   justify-content: center;
 }
 .bv-sidebar-btn.logout:hover {
-  background: rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.3);
 }
-
 /* ===== MOBILE ===== */
 @media (max-width: 576px) {
   .bv-logo {
