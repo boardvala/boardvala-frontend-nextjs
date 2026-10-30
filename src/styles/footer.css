@@ -1,36 +1,39 @@
 /* ===== Footer ===== */
 .bv-footer {
-  background: linear-gradient(135deg, #1b263b 0%, #243c63 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1b263b 100%);
   color: #cbd5e1;
   padding: 48px 0 0;
   margin-top: auto;
 }
 
-.bv-footer-brand {
-  display: inline-block;
-  margin-bottom: 16px;
+.bv-footer-heading {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+  position: relative;
+  padding-bottom: 10px;
 }
 
-.bv-footer-logo {
-  height: 42px;
-  width: auto;
-  object-fit: contain;
+.bv-footer-heading::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: #f5c518;
 }
 
 .bv-footer-desc {
-  font-size: 0.88rem;
-  line-height: 1.7;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.85rem;
+  line-height: 1.8;
   color: #94a3b8;
   max-width: 320px;
-}
-
-.bv-footer-heading {
-  color: #f8fafc;
-  font-weight: 700;
-  font-size: 0.92rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 16px;
 }
 
 /* Footer links */
@@ -45,6 +48,7 @@
 }
 
 .bv-footer-links a {
+  font-family: 'Georgia', 'Times New Roman', serif;
   color: #94a3b8;
   text-decoration: none;
   font-size: 0.88rem;
@@ -52,8 +56,8 @@
 }
 
 .bv-footer-links a:hover {
-  color: #fff;
-  padding-left: 4px;
+  color: #f5c518;
+  padding-left: 6px;
 }
 
 /* Contact list */
@@ -65,7 +69,8 @@
 
 .bv-footer-contact li {
   margin-bottom: 12px;
-  font-size: 0.88rem;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.85rem;
   color: #94a3b8;
   display: flex;
   align-items: center;
@@ -78,42 +83,60 @@
 }
 
 .bv-footer-contact a:hover {
-  color: #fff;
+  color: #f5c518;
 }
 
 /* Social icons */
 .bv-footer-socials {
   display: flex;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .bv-footer-socials a {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .bv-footer-socials a:hover {
-  background: #2563eb;
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-3px);
+}
+
+/* Individual brand colors */
+.bv-footer-socials a[aria-label="Instagram"]:hover {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+.bv-footer-socials a[aria-label="Facebook"]:hover {
+  background: #1877F2;
+}
+.bv-footer-socials a[aria-label="Youtube"]:hover {
+  background: #FF0000;
+}
+.bv-footer-socials a[aria-label="WhatsApp"]:hover {
+  background: #25D366;
   color: #fff;
 }
 
 /* Bottom bar */
 .bv-footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   margin-top: 40px;
   padding: 20px 0;
   text-align: center;
-  font-size: 0.82rem;
-  color: #64748b;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.8rem;
+  color: #475569;
 }
 
 /* Mobile */
@@ -121,11 +144,20 @@
   .bv-footer {
     padding: 32px 0 0;
   }
-
   .bv-footer-desc {
     max-width: 100%;
+    font-size: 0.8rem;
   }
-
+  .bv-footer-heading {
+    font-size: 0.88rem;
+    margin-bottom: 14px;
+  }
+  .bv-footer-links a {
+    font-size: 0.82rem;
+  }
+  .bv-footer-contact li {
+    font-size: 0.8rem;
+  }
   .bv-footer-bottom {
     margin-top: 24px;
   }

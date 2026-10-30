@@ -24,6 +24,7 @@ export default function DesignYourOwnSection() {
           object-fit: cover; 
         }
         .dyo-cta {
+          font-family: 'Georgia', 'Times New Roman', serif;
           display: inline-block;
           text-decoration: none;
           background: #2563eb;
@@ -55,13 +56,13 @@ export default function DesignYourOwnSection() {
 
           {/* Right — copy */}
           <div className="col-lg-6">
-            <span className="badge bg-primary px-3 py-2 mb-3">
+            <span className="badge bg-primary px-3 py-2 mb-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
               CUSTOM DESIGN SERVICE
             </span>
 
-            <h2 className="fw-bold mb-3">Already have your own design?</h2>
+            <h2 className="fw-bold mb-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Already have your own design?</h2>
 
-            <p className="text-muted fs-5 mb-4">
+            <p className="text-muted fs-5 mb-4" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
               Upload your artwork, logo or photo and choose the size that fits
               your door. Our team produces it on premium materials with a clean,
               professional finish — ready to mount at your home or flat.
@@ -70,28 +71,22 @@ export default function DesignYourOwnSection() {
             <div className="mb-4">
               <div className="d-flex align-items-center mb-3">
                 <span className="dyo-check">✓</span>
-                <span className="ms-3">Upload JPG, PNG, SVG</span>
+                <span className="ms-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Upload JPG, PNG, SVG</span>
               </div>
 
               <div className="d-flex align-items-center mb-3">
                 <span className="dyo-check">✓</span>
-                <span className="ms-3">
-                  Choose your exact size &amp; orientation
-                </span>
+                <span className="ms-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Choose your exact size &amp; orientation</span>
               </div>
 
               <div className="d-flex align-items-center mb-3">
                 <span className="dyo-check">✓</span>
-                <span className="ms-3">
-                  Premium MDF, Acrylic, Sunboard &amp; Vinyl finishes
-                </span>
+                <span className="ms-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Premium MDF, Acrylic, Sunboard &amp; Vinyl finishes</span>
               </div>
 
               <div className="d-flex align-items-center">
                 <span className="dyo-check">✓</span>
-                <span className="ms-3">
-                  Fast production &amp; secure delivery
-                </span>
+                <span className="ms-3" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Fast production &amp; secure delivery</span>
               </div>
             </div>
 

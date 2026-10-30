@@ -100,8 +100,8 @@ export default function CompletedProjects() {
     <section className="py-5">
       <div className="container">
         <div className="cp-head">
-          <h2 className="fw-bold mb-2">Our Completed Projects</h2>
-          <p className="text-muted mb-0">
+          <h2 className="fw-bold mb-2" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>Our Completed Projects</h2>
+          <p className="text-muted mb-0" style={{ fontFamily: "'Georgia', 'Times New Roman', serif", fontSize: "0.9rem" }}>
             Trusted by hospitals, malls, shops and businesses across India.
           </p>
         </div>
