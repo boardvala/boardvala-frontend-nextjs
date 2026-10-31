@@ -39,7 +39,6 @@ export default function LayoutShell({ children }) {
       </main>
       <Footer />
       <AIChatWidget />
-      <WhatsAppButton />
       <SurveyPopup />
     </>
   );

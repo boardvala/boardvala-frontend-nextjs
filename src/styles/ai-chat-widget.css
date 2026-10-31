@@ -1,7 +1,7 @@
 /* ===== Floating Button ===== */
 .aic-fab {
   position: fixed;
-  bottom: 90px;
+  bottom: 24px;
   right: 24px;
   z-index: 1000;
   display: flex;
@@ -32,7 +32,7 @@
 /* ===== Chat Window ===== */
 .aic-window {
   position: fixed;
-  bottom: 100px;
+  bottom: 24px;
   right: 24px;
   width: 380px;
   height: 480px;
@@ -249,6 +249,29 @@
   background: #fff;
 }
 
+/* ===== whatsapp button in chat window ===== */
+
+.aic-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: #25D366;
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 20px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.aic-whatsapp-btn:hover {
+  background: #1da851;
+  transform: translateY(-1px);
+  color: #fff;
+}
+
 /* ===== Animations ===== */
 @keyframes aicPulse {
   0%, 100% { opacity: 1; }
@@ -263,7 +286,7 @@
 /* ===== Mobile ===== */
 @media (max-width: 575.98px) {
   .aic-fab {
-    bottom: 90px;
+    bottom: 16px;
     right: 25px;
     width: 52px;
     height: 52px;
@@ -291,4 +314,63 @@
 .aic-messages::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+}
+
+
+/* ===== Greeting Bubble ===== */
+.aic-greeting {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  background: #fff;
+  color: #1b263b;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 36px 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  animation: aicGreetIn 0.5s ease forwards;
+  animation-delay: 2s;
+  opacity: 0;
+}
+.aic-greeting::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 24px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #fff;
+}
+.aic-greeting-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 2px;
+}
+.aic-greeting-close:hover {
+  color: #1b263b;
+}
+
+@keyframes aicGreetIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+  .aic-greeting {
+    bottom: 95px;
+    right: 16px;
+    font-size: 0.8rem;
+  }
 }
