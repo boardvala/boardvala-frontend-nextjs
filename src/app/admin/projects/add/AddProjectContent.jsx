@@ -24,10 +24,15 @@ export default function AddProjectContent() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleFilesChange(e) {
+ function handleFilesChange(e) {
     const selected = Array.from(e.target.files);
     if (selected.length > 10) {
       Swal.fire({ icon: "warning", title: "Maximum 10 images allowed" });
+      return;
+    }
+    const oversized = selected.filter((f) => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      Swal.fire({ icon: "warning", title: "Each image must be under 10 MB" });
       return;
     }
     setFiles(selected);

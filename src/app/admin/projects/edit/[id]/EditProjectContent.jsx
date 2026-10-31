@@ -80,18 +80,27 @@ export default function EditProjectContent() {
   }
 
   /* ── New images ── */
-  function handleNewImages(e) {
+function handleNewImages(e) {
     const files = Array.from(e.target.files);
-    const totalAllowed = 10 - (existingImages.length - removeImages.length);
-
-    if (files.length + newFiles.length > totalAllowed) {
-      Swal.fire({ icon: "warning", title: `Maximum ${totalAllowed} new images allowed.` });
+    if (files.length > 5) {
+      Swal.fire({ icon: "warning", title: "You can select only 5 images" });
+      e.target.value = "";
       return;
     }
-
+    if (newFiles.length > 0) {
+      Swal.fire({ icon: "warning", title: "You can not select more than 5 images" });
+      e.target.value = "";
+      return;
+    }
+    const oversized = files.filter((f) => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      Swal.fire({ icon: "warning", title: "Each image must be under 10 MB" });
+      e.target.value = "";
+      return;
+    }
     const previews = files.map((f) => URL.createObjectURL(f));
-    setNewFiles([...newFiles, ...files]);
-    setNewPreviews([...newPreviews, ...previews]);
+    setNewFiles(files);
+    setNewPreviews(previews);
   }
 
   function removeNewImage(index) {
