@@ -19,10 +19,10 @@ export default function DesignYourOwnSection() {
           flex-shrink: 0;
         }
         .dyo-img {
-          width: 100%;
-          max-height: 440px;
-          object-fit: cover; 
-        }
+         width: 100%;
+         max-height: 440px;
+         object-fit: contain;
+         }
         .dyo-cta {
           font-family: 'Georgia', 'Times New Roman', serif;
           display: inline-block;
