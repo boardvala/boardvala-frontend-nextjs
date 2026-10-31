@@ -154,12 +154,6 @@ export default function CompletedProjects() {
                     </div>
                   )}
                   <span className="cp-card__badge">{project.category}</span>
-                  {project.images?.length > 0 && (
-                    <span className="cp-card__count">
-                      <i className="bi bi-images me-1"></i>
-                      {project.images.length} photos
-                    </span>
-                  )}
                 </div>
                 <div className="cp-card__body">
                   <h5 className="cp-card__title">{project.title}</h5>

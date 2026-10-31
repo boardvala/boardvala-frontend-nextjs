@@ -102,10 +102,6 @@ export default function ProjectDetailClient({ initialProject }) {
                     {project.location}
                   </span>
                 )}
-                <span className="text-muted" style={{ fontSize: "0.85rem" }}>
-                  <i className="bi bi-images me-1"></i>
-                  {project.images?.length || 0} photos
-                </span>
               </div>
             </div>
           </div>
