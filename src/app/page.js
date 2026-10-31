@@ -70,9 +70,9 @@ export default function Home() {
       />
       <Hero />
       <Categories />
+      <CompletedProjects />
       <InspiredDesigns />
       <FeaturedProductsSection />
-      <CompletedProjects />
       <DesignYourOwnSection />
       <WhyChooseBoardVala />
       <Testimonials />
